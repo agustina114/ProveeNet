@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2952E8"
+    tools:context=".Registro">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Botón volver -->
+            <LinearLayout
+                android:id="@+id/btnVolver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Volver al inicio de sesión"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Logo -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/circle_white_bg"
+                android:padding="16dp"
+                android:src="@drawable/ic_building"
+                app:tint="#2952E8" />
+
+            <!-- Título -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="Crear Cuenta"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:text="Únete a ProveeNet"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+            <!-- Card blanca con el formulario -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Botones de selección Comprador/Proveedor -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/selector_container_bg"
+                        android:orientation="horizontal"
+                        android:padding="4dp">
+
+                        <Button
+                            android:id="@+id/btnComprador"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_selector_selected"
+                            android:drawablePadding="8dp"
+                            android:gravity="center"
+                            android:text="Comprador"
+                            android:textAllCaps="false"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <Button
+                            android:id="@+id/btnProveedor"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_selector_unselected"
+                            android:drawablePadding="8dp"
+                            android:gravity="center"
+                            android:text="Proveedor"
+                            android:textAllCaps="false"
+                            android:textColor="#757575"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Contenedor para formularios -->
+                    <LinearLayout
+                        android:id="@+id/llFormComprador"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <!-- Título -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Registro de Comprador"
+                            android:textColor="#000000"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <!-- Nombre Completo -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:text="Nombre Completo *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_person"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etNombreComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Ej: Juan Pérez"
+                                android:inputType="textPersonName"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Correo Electrónico -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Correo Electrónico *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_email"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etEmailComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="tu@email.cl"
+                                android:inputType="textEmailAddress"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Empresa -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Empresa *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_business"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etEmpresaComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Ej: Mi Empresa S.A."
+                                android:inputType="text"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Contraseña -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Contraseña *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_lock"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etPasswordComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Mínimo 6 caracteres"
+                                android:inputType="textPassword"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Confirmar Contraseña -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Confirmar Contraseña *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_lock"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etConfirmPasswordComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Repite tu contraseña"
+                                android:inputType="textPassword"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Botón Crear Cuenta -->
+                        <Button
+                            android:id="@+id/btnCrearCuentaComprador"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="24dp"
+                            android:background="@drawable/button_blue_bg"
+                            android:text="Crear Cuenta de Comprador"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Beneficios -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:background="#F5F9FF"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Como comprador podrás:"
+                                android:textColor="#424242"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="✓ Explorar catálogos de proveedores verificados"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="✓ Realizar compras y cotizaciones"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="✓ Gestionar tus órdenes"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="✓ Contactar directamente con proveedores"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Formulario Proveedor (oculto por defecto) -->
+                    <LinearLayout
+                        android:id="@+id/llFormProveedor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <!-- Título -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Registro de Proveedor"
+                            android:textColor="#000000"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <!-- Nombre de la Empresa -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:text="Nombre de la Empresa *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_business"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etNombreEmpresaProveedor"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Ej: Distribuidora ABC"
+                                android:inputType="text"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Correo Electrónico -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Correo Electrónico *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_email"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etEmailProveedor"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="empresa@ejemplo.cl"
+                                android:inputType="textEmailAddress"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Rubro -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Rubro *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_category"
+                                app:tint="#9E9E9E" />
+
+                            <Spinner
+                                android:id="@+id/spinnerRubro"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:entries="@array/rubros_array"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Teléfono -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Teléfono *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_iphone"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etTelefonoProveedor"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="+56 9 1234 5678"
+                                android:inputType="phone"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Contraseña -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Contraseña *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_lock"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etPasswordProveedor"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Mínimo 6 caracteres"
+                                android:inputType="textPassword"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Confirmar Contraseña -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Confirmar Contraseña *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_lock"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etConfirmPasswordProveedor"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Repite tu contraseña"
+                                android:inputType="textPassword"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Botón Crear Cuenta -->
+                        <Button
+                            android:id="@+id/btnCrearCuentaProveedor"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="24dp"
+                            android:background="@drawable/button_green_bg"
+                            android:text="Crear Cuenta de Proveedor"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Beneficios -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:background="#F0FFF4"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Como proveedor podrás:"
+                                android:textColor="#424242"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="✓ Publicar tu catálogo de productos"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="✓ Recibir órdenes de compra"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="✓ Gestionar tu inventario"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="✓ Analizar estadísticas de ventas"
+                                android:textColor="#757575"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

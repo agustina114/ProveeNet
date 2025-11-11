@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 🎨 Estilo principal del modal -->
+    <style name="DialogProveeNet" parent="Theme.AppCompat.Light.Dialog.MinWidth">
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimationProveeNet</item>
+    </style>
+
+    <!-- ✨ Animaciones de entrada/salida -->
+    <style name="DialogAnimationProveeNet">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_fade_out</item>
+    </style>
+
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "919496284671",
+    "project_id": "proveenet-e0c03",
+    "storage_bucket": "proveenet-e0c03.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919496284671:android:752a43c3aa62db2638afca",
+        "android_client_info": {
+          "package_name": "com.proveenet.proveenet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7KilnHicyrl3NGfzKxGAvXJyKrvde-1g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

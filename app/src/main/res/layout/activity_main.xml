@@ -4,15 +4,246 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2952E8"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- Logo circular con icono de edificio -->
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/circle_white_bg"
+        android:padding="20dp"
+        android:src="@drawable/ic_building"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#2952E8" />
+
+    <!-- Título ProveeNet -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="ProveeNet"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivLogo" />
+
+    <!-- Subtítulo -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Red de Proveedores y Compras"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <!-- Card blanca con el formulario -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Selector Comprador / Proveedor (sin recorte y centrado) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/selector_container_bg"
+                android:padding="6dp"
+                android:layout_marginBottom="8dp"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btnComprador"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_selector_selected"
+                    android:drawableStart="@drawable/ic_shopping_bag"
+                    android:drawablePadding="8dp"
+                    android:ellipsize="none"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.03"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:minEms="7"
+                    android:singleLine="true"
+                    android:text="Comprador"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnProveedor"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/btn_selector_unselected"
+                    android:drawableStart="@drawable/ic_store"
+                    android:drawablePadding="8dp"
+                    android:ellipsize="none"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.03"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:minEms="7"
+                    android:singleLine="true"
+                    android:text="Proveedor"
+                    android:textAllCaps="false"
+                    android:textColor="#757575"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Título Iniciar Sesión -->
+            <TextView
+                android:id="@+id/tvLoginTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="Iniciar Sesión - Comprador"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Label Correo Electrónico -->
+            <TextView
+                android:id="@+id/tvEmailLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Correo Electrónico"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+            <!-- Campo de Email con icono -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_email"
+                    app:tint="#9E9E9E" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="tu@email.cl"
+                    android:inputType="textEmailAddress"
+                    android:textColor="#000000"
+                    android:textColorHint="#BDBDBD"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Label Contraseña -->
+            <TextView
+                android:id="@+id/tvPasswordLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Contraseña"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+            <!-- Campo de Contraseña con icono -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_lock"
+                    app:tint="#9E9E9E" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="••••••"
+                    android:inputType="textPassword"
+                    android:textColor="#000000"
+                    android:textColorHint="#BDBDBD"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Botón Ingresar -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/button_blue_bg"
+                android:text="Ingresar"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Texto de registro -->
+            <TextView
+                android:id="@+id/registrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:clickable="true"
+                android:text="¿No tienes cuenta? Regístrate aquí"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

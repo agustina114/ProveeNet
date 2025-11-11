@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="rubros_array">
+        <item>Seleccionar rubro</item>
+        <item>Construcción</item>
+        <item>Ferretería</item>
+        <item>Tecnología</item>
+        <item>Alimentos</item>
+        <item>Textil</item>
+        <item>Automotriz</item>
+        <item>Otros</item>
+    </string-array>
+</resources>

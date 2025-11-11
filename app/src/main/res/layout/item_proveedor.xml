@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nombre y badge verificado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNombreProveedor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Distribuidora Andina"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Categoría y verificado -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCategoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/badge_categoria_bg"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="Ferretería"
+                android:textColor="#424242"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvVerificado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/badge_verificado_bg"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="Verificado"
+                android:textColor="#2E7D32"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Dirección -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_locations"
+                app:tint="#757575" />
+
+            <TextView
+                android:id="@+id/tvDireccion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Av. Las Industrias 2345, Santiago"
+                android:textColor="#757575"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Teléfono -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_iphone"
+                app:tint="#757575" />
+
+            <TextView
+                android:id="@+id/tvTelefono"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="+56 9 5555 4444"
+                android:textColor="#757575"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Botones de acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnVerCatalogo"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_outline_bg"
+                android:drawableLeft="@drawable/ic_eye"
+                android:drawablePadding="8dp"
+                android:text="Ver Catálogo"
+                android:textAllCaps="false"
+                android:textColor="#424242"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/btnContactar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_primary_bg"
+                android:text="Contactar"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

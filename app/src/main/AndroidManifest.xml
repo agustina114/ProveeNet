@@ -1,21 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.proveenet.proveenet">
+    package="com.proveenet.proveenet" >
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProveeNet"
-        tools:targetApi="31">
+        tools:targetApi="31" >
+        <activity
+            android:name=".MiCarrito"
+            android:exported="false" />
+        <activity
+            android:name=".MisOrdenes"
+            android:exported="false" />
+        <activity
+            android:name=".MiCatalogo"
+            android:exported="false" />
+        <activity
+            android:name=".DashboardProveedor"
+            android:exported="false" />
+        <activity
+            android:name=".Registro"
+            android:exported="false" />
+        <activity
+            android:name=".Compras"
+            android:exported="false" />
+        <activity
+            android:name=".Productos"
+            android:exported="false" />
+        <activity
+            android:name=".Proveedores"
+            android:exported="false" />
+        <activity
+            android:name=".Panel_comprador"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

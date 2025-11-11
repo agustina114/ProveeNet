@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bg_modal_rounded">
+
+    <!-- 🟢 Título -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Editar producto"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 🧾 Campos de edición -->
+    <EditText
+        android:id="@+id/etNombreEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"
+        android:inputType="textPersonName"
+        android:background="@drawable/input_bg"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E"
+        android:layout_marginBottom="10dp" />
+
+    <EditText
+        android:id="@+id/etCategoriaEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Categoría"
+        android:inputType="text"
+        android:background="@drawable/input_bg"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E"
+        android:layout_marginBottom="10dp" />
+
+    <EditText
+        android:id="@+id/etDescripcionEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción"
+        android:inputType="textMultiLine"
+        android:minLines="2"
+        android:gravity="top"
+        android:background="@drawable/input_bg"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E"
+        android:layout_marginBottom="10dp" />
+
+    <EditText
+        android:id="@+id/etPrecioEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Precio"
+        android:inputType="number"
+        android:background="@drawable/input_bg"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E"
+        android:layout_marginBottom="10dp" />
+
+    <EditText
+        android:id="@+id/etStockEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Stock disponible"
+        android:inputType="number"
+        android:background="@drawable/input_bg"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 🔘 Botones inferiores -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnCancelarEdit"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#9E9E9E"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-medium" />
+
+        <Button
+            android:id="@+id/btnGuardarEdit"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Guardar cambios"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2E7D32"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+</LinearLayout>
