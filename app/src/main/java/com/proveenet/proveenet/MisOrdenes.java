@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MisOrdenes extends AppCompatActivity {
+public class MisOrdenes extends BaseActivity {
 
     private RecyclerView recyclerOrdenes;
     private FirebaseFirestore db;
@@ -71,7 +71,7 @@ public class MisOrdenes extends AppCompatActivity {
         cargarNombreProveedor();
         cargarOrdenesProveedor();
 
-        // --- Header ---
+
         btnMenu.setOnClickListener(v -> {
             startActivity(new Intent(MisOrdenes.this, DashboardProveedor.class));
             overridePendingTransition(0, 0);
@@ -109,8 +109,6 @@ public class MisOrdenes extends AppCompatActivity {
     }
 
     // ==========================================================
-    // 👤 Cargar nombre proveedor
-    // ==========================================================
     private void cargarNombreProveedor() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -129,8 +127,7 @@ public class MisOrdenes extends AppCompatActivity {
                         Toast.makeText(this, "Error al cargar nombre: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // ==========================================================
-    // 📦 Cargar órdenes del proveedor (con control de nulos)
+
     // ==========================================================
     private void cargarOrdenesProveedor() {
         FirebaseUser user = auth.getCurrentUser();

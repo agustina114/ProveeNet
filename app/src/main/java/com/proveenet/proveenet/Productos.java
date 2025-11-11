@@ -22,13 +22,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Productos extends AppCompatActivity {
+public class Productos extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private LinearLayout llListaProductos;
-    private TextView tvProductosCount;
+    private TextView tvProductosCount, tvUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,19 +39,60 @@ public class Productos extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // 🔹 Referencias UI
         llListaProductos = findViewById(R.id.llListaProductos);
         tvProductosCount = findViewById(R.id.tvProductosCount);
+        tvUserName = findViewById(R.id.tvUserName);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // 🔹 Selecciona "Productos" en la barra inferior
         bottomNavigationView.setSelectedItemId(R.id.nav_productos);
 
-        // 🔹 Carga productos disponibles
+        mostrarNombreUsuario();
+
         cargarProductosDisponibles();
 
-        // 🔹 Configura navegación inferior
         setupBottomNavigation();
+    }
+
+
+    // ======================================================
+    private void mostrarNombreUsuario() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            tvUserName.setText("Usuario desconocido");
+            return;
+        }
+
+        String uid = user.getUid();
+
+        // Primero busca en compradores
+        db.collection("compradores").document(uid).get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        String nombre = document.getString("nombre");
+                        if (nombre != null && !nombre.isEmpty()) {
+                            tvUserName.setText(nombre);
+                        } else {
+                            tvUserName.setText("Sin nombre");
+                        }
+                    } else {
+                        // Si no está en compradores, buscar en proveedores
+                        db.collection("proveedores").document(uid).get()
+                                .addOnSuccessListener(docProv -> {
+                                    if (docProv.exists()) {
+                                        String nombre = docProv.getString("nombre");
+                                        if (nombre != null && !nombre.isEmpty()) {
+                                            tvUserName.setText(nombre);
+                                        } else {
+                                            tvUserName.setText("Sin nombre");
+                                        }
+                                    } else {
+                                        tvUserName.setText("Usuario desconocido");
+                                    }
+                                })
+                                .addOnFailureListener(e -> tvUserName.setText("Error al cargar nombre"));
+                    }
+                })
+                .addOnFailureListener(e -> tvUserName.setText("Error al cargar nombre"));
     }
 
     private void setupBottomNavigation() {
@@ -76,8 +117,7 @@ public class Productos extends AppCompatActivity {
         });
     }
 
-    // ======================================================
-    // 📦 Cargar todos los productos activos
+
     // ======================================================
     private void cargarProductosDisponibles() {
         db.collection("productos")
@@ -88,8 +128,7 @@ public class Productos extends AppCompatActivity {
                         Toast.makeText(this, "❌ Error al cargar productos", Toast.LENGTH_LONG).show());
     }
 
-    // ======================================================
-    // 🧱 Mostrar productos en cards
+
     // ======================================================
     private void mostrarProductos(QuerySnapshot snapshot) {
         llListaProductos.removeAllViews();
@@ -101,66 +140,52 @@ public class Productos extends AppCompatActivity {
             String categoria = doc.getString("categoria");
             String descripcion = doc.getString("descripcion");
             String proveedor = doc.getString("proveedorNombre");
-            String proveedorId = doc.getString("proveedorId"); // <-- ¡¡CORREGIDO!! Esta línea faltaba
+            String proveedorId = doc.getString("proveedorId");
 
-            // ======== 🧩 ARREGLO UNIVERSAL PARA CAMPOS FIRESTORE ========
-            // Precio
-            Object precioObjeto = doc.get("precio");
-            double precioDouble = 0.0;
-            String precioTexto = "0";
+            Object precioObj = doc.get("precio");
+            double precio = 0.0;
+            String precioTxt = "0";
 
-            if (precioObjeto != null) {
-                if (precioObjeto instanceof Number) {
-                    precioDouble = ((Number) precioObjeto).doubleValue();
-                    precioTexto = String.format("%.0f", precioDouble);
-                } else if (precioObjeto instanceof String) {
-                    String limpio = ((String) precioObjeto).replaceAll("[^0-9]", "");
-                    if (!limpio.isEmpty()) {
-                        try {
-                            precioDouble = Double.parseDouble(limpio);
-                            precioTexto = limpio;
-                        } catch (NumberFormatException ignored) {}
-                    }
+            if (precioObj != null) {
+                if (precioObj instanceof Number) {
+                    precio = ((Number) precioObj).doubleValue();
+                    precioTxt = String.format("%.0f", precio);
+                } else if (precioObj instanceof String) {
+                    try {
+                        precio = Double.parseDouble(((String) precioObj).replaceAll("[^0-9.]", ""));
+                        precioTxt = String.valueOf(precio);
+                    } catch (Exception ignored) {}
                 }
             }
 
-            // Stock
-            Object stockObjeto = doc.get("stock");
-            String stockTexto = "0";
-            if (stockObjeto != null) {
-                if (stockObjeto instanceof Number) {
-                    stockTexto = ((Number) stockObjeto).toString();
-                } else if (stockObjeto instanceof String) {
-                    stockTexto = (String) stockObjeto;
+            Object stockObj = doc.get("stock");
+            String stockTxt = "0";
+            if (stockObj != null) {
+                if (stockObj instanceof Number) {
+                    stockTxt = ((Number) stockObj).toString();
+                } else if (stockObj instanceof String) {
+                    stockTxt = (String) stockObj;
                 }
             }
-            // ============================================================
+            // =============================================================
 
-            // 🔹 Inflar card de producto
+            // 🔹 Inflar card
             View cardView = LayoutInflater.from(this)
                     .inflate(R.layout.item_producto_publico, llListaProductos, false);
 
-            ((TextView) cardView.findViewById(R.id.tvNombreProducto))
-                    .setText(nombre != null ? nombre : "Sin nombre");
-            ((TextView) cardView.findViewById(R.id.tvPrecio))
-                    .setText("$" + precioTexto);
-            ((TextView) cardView.findViewById(R.id.tvProveedor))
-                    .setText(proveedor != null ? proveedor : "Desconocido");
-            ((TextView) cardView.findViewById(R.id.tvStock))
-                    .setText(stockTexto + " disponibles");
-            ((TextView) cardView.findViewById(R.id.tvCategoria))
-                    .setText(categoria != null ? categoria : "Sin categoría");
-            ((TextView) cardView.findViewById(R.id.tvDescripcion))
-                    .setText(descripcion != null ? descripcion : "Sin descripción");
+            ((TextView) cardView.findViewById(R.id.tvNombreProducto)).setText(nombre != null ? nombre : "Sin nombre");
+            ((TextView) cardView.findViewById(R.id.tvPrecio)).setText("$" + precioTxt);
+            ((TextView) cardView.findViewById(R.id.tvProveedor)).setText(proveedor != null ? proveedor : "Desconocido");
+            ((TextView) cardView.findViewById(R.id.tvStock)).setText(stockTxt + " disponibles");
+            ((TextView) cardView.findViewById(R.id.tvCategoria)).setText(categoria != null ? categoria : "Sin categoría");
+            ((TextView) cardView.findViewById(R.id.tvDescripcion)).setText(descripcion != null ? descripcion : "Sin descripción");
 
             Button btnAgregar = cardView.findViewById(R.id.btnAgregarCotizacion);
-
-            double finalPrecioDouble = precioDouble;
-            String finalProveedorId = proveedorId; // <-- ¡¡CORREGIDO!!
+            double finalPrecio = precio;
+            String finalProveedorId = proveedorId;
 
             btnAgregar.setOnClickListener(v ->
-                    // <-- ¡¡CORREGIDO!! Pasamos 5 parámetros
-                    agregarAlCarrito(codigo, nombre, proveedor, finalProveedorId, finalPrecioDouble));
+                    agregarAlCarrito(codigo, nombre, proveedor, finalProveedorId, finalPrecio));
 
             llListaProductos.addView(cardView);
             count++;
@@ -169,10 +194,8 @@ public class Productos extends AppCompatActivity {
         tvProductosCount.setText(count + " disponibles");
     }
 
+
     // ======================================================
-    // 🛒 Agregar producto al carrito
-    // ======================================================
-    // <-- ¡¡CORREGIDO!! Recibimos 5 parámetros
     private void agregarAlCarrito(String productoId, String nombre, String proveedor, String proveedorId, double precio) {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
@@ -189,7 +212,6 @@ public class Productos extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
-                        // Ya existe: incrementar cantidad
                         Long cantidadActual = doc.getLong("cantidad");
                         if (cantidadActual == null) cantidadActual = 0L;
 
@@ -201,13 +223,12 @@ public class Productos extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid ->
                                         Toast.makeText(this, "🛒 Cantidad actualizada", Toast.LENGTH_SHORT).show());
                     } else {
-                        // Nuevo producto
                         Map<String, Object> item = new HashMap<>();
                         item.put("nombre", nombre);
                         item.put("proveedor", proveedor);
-                        item.put("proveedorId", proveedorId); // <-- ¡¡CORREGIDO!! Esta línea faltaba
-                        item.put("precio", precio);   // ✅ Double puro
-                        item.put("cantidad", 1L);     // ✅ Long
+                        item.put("proveedorId", proveedorId);
+                        item.put("precio", precio);
+                        item.put("cantidad", 1L);
                         item.put("productoId", productoId);
 
                         db.collection("carritos")

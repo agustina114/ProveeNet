@@ -1,6 +1,9 @@
 package com.proveenet.proveenet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -16,9 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Registro extends AppCompatActivity {
+public class Registro extends BaseActivity {
 
-    // 🔹 Componentes UI
     private Button btnComprador, btnProveedor;
     private LinearLayout llFormComprador, llFormProveedor;
     private LinearLayout btnVolver;
@@ -38,32 +40,28 @@ public class Registro extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
 
+
+    private final ColorStateList moradoComprador = ColorStateList.valueOf(Color.parseColor("#6A1B9A"));
+    private final ColorStateList verdeProveedor = ColorStateList.valueOf(Color.parseColor("#2E7D32"));
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
 
-        // Inicializar componentes
         initializeViews();
-
-        // Inicializar Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Configurar listeners
         setupListeners();
-
-        // Mostrar por defecto el formulario de comprador
         mostrarFormularioComprador();
     }
 
     private void initializeViews() {
         btnComprador = findViewById(R.id.btnComprador);
         btnProveedor = findViewById(R.id.btnProveedor);
-
         llFormComprador = findViewById(R.id.llFormComprador);
         llFormProveedor = findViewById(R.id.llFormProveedor);
-
         btnVolver = findViewById(R.id.btnVolver);
 
         etNombreComprador = findViewById(R.id.etNombreComprador);
@@ -91,33 +89,44 @@ public class Registro extends AppCompatActivity {
         btnCrearCuentaProveedor.setOnClickListener(v -> registrarProveedor());
     }
 
-    // =======================================================
-    // 🔹 Alternar formularios y colores
-    // =======================================================
+
     private void mostrarFormularioComprador() {
         llFormComprador.setVisibility(View.VISIBLE);
         llFormProveedor.setVisibility(View.GONE);
 
+        // Botón activo → morado
         btnComprador.setBackgroundResource(R.drawable.btn_selector_selected);
+        ViewCompat.setBackgroundTintList(btnComprador, moradoComprador);
         btnComprador.setTextColor(Color.WHITE);
 
+        // Botón inactivo → gris
         btnProveedor.setBackgroundResource(R.drawable.btn_selector_unselected);
         btnProveedor.setTextColor(Color.parseColor("#757575"));
+
+        // Botón “Crear Cuenta”
+        btnCrearCuentaComprador.setBackgroundResource(R.drawable.button_blue_bg);
+        ViewCompat.setBackgroundTintList(btnCrearCuentaComprador, moradoComprador);
     }
 
     private void mostrarFormularioProveedor() {
         llFormComprador.setVisibility(View.GONE);
         llFormProveedor.setVisibility(View.VISIBLE);
 
+        // Botón activo → verde
         btnProveedor.setBackgroundResource(R.drawable.btn_selector_selected);
+        ViewCompat.setBackgroundTintList(btnProveedor, verdeProveedor);
         btnProveedor.setTextColor(Color.WHITE);
 
+        // Botón inactivo → gris
         btnComprador.setBackgroundResource(R.drawable.btn_selector_unselected);
         btnComprador.setTextColor(Color.parseColor("#757575"));
+
+        // Botón “Crear Cuenta”
+        btnCrearCuentaProveedor.setBackgroundResource(R.drawable.button_blue_bg);
+        ViewCompat.setBackgroundTintList(btnCrearCuentaProveedor, verdeProveedor);
     }
 
-    // =======================================================
-    // 🔹 REGISTRO DE COMPRADOR
+
     // =======================================================
     private void registrarComprador() {
         String nombre = etNombreComprador.getText().toString().trim();
@@ -141,7 +150,7 @@ public class Registro extends AppCompatActivity {
                     db.collection("compradores").document(uid).set(comprador)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "✅ Cuenta de comprador creada", Toast.LENGTH_LONG).show();
-                                finish(); // Vuelve al login
+                                finish();
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(this, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_LONG).show()
@@ -155,51 +164,45 @@ public class Registro extends AppCompatActivity {
     private boolean validarCamposComprador(String nombre, String email, String empresa, String password, String confirmPassword) {
         if (nombre.isEmpty()) {
             etNombreComprador.setError("Ingresa tu nombre completo");
-            etNombreComprador.requestFocus();
             return false;
         }
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etEmailComprador.setError("Ingresa un email válido");
-            etEmailComprador.requestFocus();
             return false;
         }
         if (empresa.isEmpty()) {
             etEmpresaComprador.setError("Ingresa el nombre de tu empresa");
-            etEmpresaComprador.requestFocus();
             return false;
         }
         if (password.isEmpty() || password.length() < 6) {
             etPasswordComprador.setError("La contraseña debe tener al menos 6 caracteres");
-            etPasswordComprador.requestFocus();
             return false;
         }
         if (!password.equals(confirmPassword)) {
             etConfirmPasswordComprador.setError("Las contraseñas no coinciden");
-            etConfirmPasswordComprador.requestFocus();
             return false;
         }
         return true;
     }
 
-    // =======================================================
-    // 🔹 REGISTRO DE PROVEEDOR
+
     // =======================================================
     private void registrarProveedor() {
-        String nombreEmpresa = etNombreEmpresaProveedor.getText().toString().trim();
+        String empresa = etNombreEmpresaProveedor.getText().toString().trim();
         String email = etEmailProveedor.getText().toString().trim();
         String rubro = spinnerRubro.getSelectedItem().toString();
         String telefono = etTelefonoProveedor.getText().toString().trim();
         String password = etPasswordProveedor.getText().toString().trim();
         String confirmPassword = etConfirmPasswordProveedor.getText().toString().trim();
 
-        if (!validarCamposProveedor(nombreEmpresa, email, rubro, telefono, password, confirmPassword)) return;
+        if (!validarCamposProveedor(empresa, email, rubro, telefono, password, confirmPassword)) return;
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
                     String uid = result.getUser().getUid();
 
                     Map<String, Object> proveedor = new HashMap<>();
-                    proveedor.put("empresa", nombreEmpresa);
+                    proveedor.put("empresa", empresa);
                     proveedor.put("correo", email);
                     proveedor.put("rubro", rubro);
                     proveedor.put("telefono", telefono);
@@ -222,32 +225,26 @@ public class Registro extends AppCompatActivity {
     private boolean validarCamposProveedor(String empresa, String email, String rubro, String telefono, String password, String confirmPassword) {
         if (empresa.isEmpty()) {
             etNombreEmpresaProveedor.setError("Ingresa el nombre de tu empresa");
-            etNombreEmpresaProveedor.requestFocus();
             return false;
         }
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etEmailProveedor.setError("Ingresa un email válido");
-            etEmailProveedor.requestFocus();
             return false;
         }
         if (rubro.equals("Seleccionar rubro")) {
             Toast.makeText(this, "Selecciona un rubro", Toast.LENGTH_SHORT).show();
-            spinnerRubro.requestFocus();
             return false;
         }
         if (telefono.isEmpty()) {
             etTelefonoProveedor.setError("Ingresa tu teléfono");
-            etTelefonoProveedor.requestFocus();
             return false;
         }
         if (password.isEmpty() || password.length() < 6) {
             etPasswordProveedor.setError("La contraseña debe tener al menos 6 caracteres");
-            etPasswordProveedor.requestFocus();
             return false;
         }
         if (!password.equals(confirmPassword)) {
             etConfirmPasswordProveedor.setError("Las contraseñas no coinciden");
-            etConfirmPasswordProveedor.requestFocus();
             return false;
         }
         return true;

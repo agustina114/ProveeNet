@@ -13,7 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-public class Panel_comprador extends AppCompatActivity {
+public class Panel_comprador extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private ImageButton btnLogout, btnNotifications, btnMenu;
@@ -33,7 +33,6 @@ public class Panel_comprador extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         user = auth.getCurrentUser();
 
-        // 🔹 Referencias UI
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnLogout = findViewById(R.id.btnLogout);
         btnNotifications = findViewById(R.id.btnNotifications);
@@ -46,7 +45,6 @@ public class Panel_comprador extends AppCompatActivity {
         tvComprasCount = findViewById(R.id.tvComprasCount);
         tvTotalGastado = findViewById(R.id.tvTotalGastado);
 
-        // ✅ Marca “Inicio” como activo
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
         if (user == null) {
@@ -55,13 +53,10 @@ public class Panel_comprador extends AppCompatActivity {
             return;
         }
 
-        // 🔹 Mostrar nombre del usuario (desde Firestore)
         cargarNombreUsuario();
 
-        // 🔹 Cargar datos del dashboard
         cargarEstadisticas();
 
-        // 🔹 Cerrar sesión
         btnLogout.setOnClickListener(v -> {
             auth.signOut();
             Intent intent = new Intent(Panel_comprador.this, MainActivity.class);
@@ -94,8 +89,7 @@ public class Panel_comprador extends AppCompatActivity {
         });
     }
 
-    // ======================================================
-    // 👤 Mostrar nombre del usuario actual
+
     // ======================================================
     private void cargarNombreUsuario() {
         db.collection("compradores")
@@ -115,8 +109,7 @@ public class Panel_comprador extends AppCompatActivity {
                 .addOnFailureListener(e -> tvUserName.setText("Usuario"));
     }
 
-    // ======================================================
-    // 📊 Cargar datos reales de Firestore
+
     // ======================================================
     private void cargarEstadisticas() {
         // 🧩 Total de proveedores

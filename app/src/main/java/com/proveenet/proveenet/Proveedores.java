@@ -12,15 +12,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class Proveedores extends AppCompatActivity {
+public class Proveedores extends BaseActivity {
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
     private LinearLayout llListaProveedores;
-    private TextView tvProveedoresCount;
+    private TextView tvProveedoresCount, tvUserName;
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -28,15 +31,18 @@ public class Proveedores extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proveedores);
 
+        auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        llListaProveedores = findViewById(R.id.llContent);
+
+        llListaProveedores = findViewById(R.id.llListaProveedores);
         tvProveedoresCount = findViewById(R.id.tvProveedoresCount);
+        tvUserName = findViewById(R.id.tvUserName);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // ✅ Marca “Proveedores” como activo
         bottomNavigationView.setSelectedItemId(R.id.nav_proveedores);
 
-        // 🔹 Cargar los proveedores reales
+        mostrarNombreUsuario();
+
         cargarProveedores();
 
         // 🔹 Menú inferior
@@ -58,8 +64,49 @@ public class Proveedores extends AppCompatActivity {
         });
     }
 
+
     // ======================================================
-    // 📡 Cargar proveedores con rol == "proveedor"
+    private void mostrarNombreUsuario() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            tvUserName.setText("Usuario desconocido");
+            return;
+        }
+
+        String uid = user.getUid();
+
+        // Buscar primero en "compradores"
+        db.collection("compradores").document(uid).get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        String nombre = document.getString("nombre");
+                        if (nombre != null && !nombre.isEmpty()) {
+                            tvUserName.setText(nombre);
+                        } else {
+                            tvUserName.setText("Sin nombre");
+                        }
+                    } else {
+                        // Si no está en compradores, buscar en "proveedores"
+                        db.collection("proveedores").document(uid).get()
+                                .addOnSuccessListener(docProv -> {
+                                    if (docProv.exists()) {
+                                        String nombre = docProv.getString("nombre");
+                                        if (nombre != null && !nombre.isEmpty()) {
+                                            tvUserName.setText(nombre);
+                                        } else {
+                                            tvUserName.setText("Sin nombre");
+                                        }
+                                    } else {
+                                        tvUserName.setText("Usuario desconocido");
+                                    }
+                                })
+                                .addOnFailureListener(e -> tvUserName.setText("Error al cargar nombre"));
+                    }
+                })
+                .addOnFailureListener(e -> tvUserName.setText("Error al cargar nombre"));
+    }
+
+
     // ======================================================
     private void cargarProveedores() {
         db.collection("proveedores")
@@ -70,8 +117,7 @@ public class Proveedores extends AppCompatActivity {
                         Toast.makeText(this, "❌ Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // ======================================================
-    // 🧱 Mostrar cards dinámicamente
+
     // ======================================================
     private void mostrarProveedores(QuerySnapshot snapshot) {
         llListaProveedores.removeAllViews();
@@ -84,7 +130,8 @@ public class Proveedores extends AppCompatActivity {
             String telefono = doc.getString("telefono");
 
             // Inflar una card
-            View card = LayoutInflater.from(this).inflate(R.layout.item_proveedor_card, llListaProveedores, false);
+            View card = LayoutInflater.from(this)
+                    .inflate(R.layout.item_proveedor_card, llListaProveedores, false);
 
             TextView tvNombre = card.findViewById(R.id.tvNombreProveedor);
             TextView tvRubro = card.findViewById(R.id.tvCategoria);
@@ -95,7 +142,6 @@ public class Proveedores extends AppCompatActivity {
             tvRubro.setText("Rubro: " + (rubro != null ? rubro : "No especificado"));
             tvCorreo.setText("Correo: " + (correo != null ? correo : "Sin correo"));
             tvTelefono.setText("Teléfono: " + (telefono != null ? telefono : "Sin teléfono"));
-
 
             // Botón Contactar
             Button btnContactar = card.findViewById(R.id.btnContactar);

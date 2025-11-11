@@ -38,7 +38,7 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
         Map<String, Object> orden = listaOrdenes.get(position);
         Context context = holder.itemView.getContext();
 
-        // === Datos del documento (con protección) ===
+
         String idOrden        = safeString(orden.get("id"));
         String estado         = safeString(orden.get("estado"));
         String metodoPago     = safeString(orden.get("metodoPago"));
@@ -48,13 +48,12 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
         double subtotal = safeDouble(orden.get("subtotal"));
         long   cantidad = safeLong(orden.get("cantidad"));
 
-        // 👇 aquí ya NO usamos Timestamp, solo mostramos toString()
         Object fechaObj = orden.get("fechaCreacion");
         String fechaFormateada = (fechaObj == null)
                 ? "Sin fecha"
                 : fechaObj.toString(); // si es Timestamp, Date o String, nunca crashea
 
-        // === Mostrar en la UI ===
+
         holder.tvOrdenNumero.setText("Orden: " + (idOrden.isEmpty() ? "N/A" : idOrden));
         holder.tvEstado.setText(estado.isEmpty() ? "pendiente" : estado);
         holder.tvFecha.setText(fechaFormateada);
@@ -62,7 +61,7 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
         holder.tvTotal.setText("$" + String.format("%.0f", subtotal));
         holder.tvProductos.setText(productoNombre.isEmpty() ? "Sin producto" : productoNombre);
 
-        // === Botón confirmar ===
+
         if ("pendiente".equalsIgnoreCase(estado)) {
             holder.btnEditar.setText("Confirmar");
             holder.btnEditar.setEnabled(true);
@@ -71,7 +70,7 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
             holder.btnEditar.setEnabled(false);
         }
 
-        // ✅ Confirmar orden → Actualizar estado + stock
+        // Confirmar orden → Actualizar estado + stock
         holder.btnEditar.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
                     .setTitle("Confirmar Orden")
@@ -125,14 +124,14 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
                     .show();
         });
 
-        // 👁️ Ver detalles
+        //  Ver detalles
         holder.btnVer.setOnClickListener(v ->
                 Toast.makeText(context,
                         "📦 " + productoNombre + "\n💰 Total: $" + String.format("%.0f", subtotal),
                         Toast.LENGTH_SHORT).show()
         );
 
-        // 🗑️ Eliminar orden
+        // Eliminar orden
         holder.btnEliminar.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
                     .setTitle("Eliminar orden")
@@ -155,7 +154,7 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
         return listaOrdenes.size();
     }
 
-    // ========= Helpers seguros =========
+
     private String safeString(Object o) {
         return o == null ? "" : o.toString();
     }
@@ -170,7 +169,7 @@ public class OrdenAdapter extends RecyclerView.Adapter<OrdenAdapter.OrdenViewHol
         try { return Long.parseLong(o.toString()); } catch (Exception e) { return 0L; }
     }
 
-    // ========= ViewHolder =========
+
     public static class OrdenViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrdenNumero, tvEstado, tvFecha, tvTotal, tvMetodoPago, tvProductos;
         Button btnVer, btnEditar, btnEliminar;

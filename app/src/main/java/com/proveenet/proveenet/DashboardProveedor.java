@@ -3,6 +3,7 @@ package com.proveenet.proveenet;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class DashboardProveedor extends AppCompatActivity {
+public class DashboardProveedor extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
@@ -25,6 +26,7 @@ public class DashboardProveedor extends AppCompatActivity {
     // 🔹 Referencias a la UI
     private TextView tvNombreEmpresa, tvWelcome, tvProductosActivos, tvStockBajo, tvOrdenesRecibidas, tvVentasMes;
     private BottomNavigationView bottomNavigationView;
+    private ImageButton btnLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class DashboardProveedor extends AppCompatActivity {
         tvOrdenesRecibidas = findViewById(R.id.tvOrdenesRecibidas);
         tvVentasMes = findViewById(R.id.tvVentasMes);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
+        btnLogout = findViewById(R.id.btnLogout);
 
         // ✅ Marca “Inicio” como activo
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
@@ -74,14 +77,26 @@ public class DashboardProveedor extends AppCompatActivity {
 
             return false;
         });
+
+        // 🚪 Botón cerrar sesión
+        btnLogout.setOnClickListener(v -> {
+            auth.signOut(); // Cierra la sesión actual en Firebase
+
+            Toast.makeText(this, "👋 Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(DashboardProveedor.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia el historial
+            startActivity(intent);
+            finish(); // Cierra la Activity actual
+        });
     }
 
-    // ==========================================================
-    // 👤 Cargar el nombre real del proveedor
     // ==========================================================
     private void cargarNombreProveedor() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
+            tvNombreEmpresa.setText("Sesión no detectada");
+            tvWelcome.setText("Bienvenido");
             Toast.makeText(this, "⚠️ No se detectó sesión activa", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -90,26 +105,32 @@ public class DashboardProveedor extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
-                        String nombreEmpresa = doc.getString("nombreEmpresa");
-                        if (nombreEmpresa != null && !nombreEmpresa.isEmpty()) {
-                            tvNombreEmpresa.setText(nombreEmpresa);
-                            tvWelcome.setText("Bienvenido, " + nombreEmpresa);
+                        String empresa = doc.getString("empresa");
+                        String correo = doc.getString("correo");
+
+                        if (empresa != null && !empresa.isEmpty()) {
+                            tvNombreEmpresa.setText(empresa);
+                            tvWelcome.setText("Bienvenido, " + empresa);
+                        } else if (correo != null && !correo.isEmpty()) {
+                            tvNombreEmpresa.setText(correo);
+                            tvWelcome.setText("Bienvenido, " + correo);
                         } else {
-                            tvNombreEmpresa.setText("Proveedor");
-                            tvWelcome.setText("Bienvenido, proveedor");
+                            tvNombreEmpresa.setText(user.getEmail());
+                            tvWelcome.setText("Bienvenido, " + user.getEmail());
                         }
                     } else {
-                        tvNombreEmpresa.setText("Proveedor no registrado");
-                        tvWelcome.setText("Bienvenido");
+                        tvNombreEmpresa.setText(user.getEmail());
+                        tvWelcome.setText("Bienvenido, " + user.getEmail());
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this,
-                        "❌ Error al cargar proveedor: " + e.getMessage(),
-                        Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    tvNombreEmpresa.setText(user.getEmail());
+                    tvWelcome.setText("Bienvenido, " + user.getEmail());
+                    Toast.makeText(this, "❌ Error al cargar proveedor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
-    // ==========================================================
-    // 📦 Contar productos activos
+
     // ==========================================================
     private void cargarProductosActivos() {
         FirebaseUser user = auth.getCurrentUser();
@@ -125,9 +146,7 @@ public class DashboardProveedor extends AppCompatActivity {
                         Toast.makeText(this, "❌ Error al contar productos", Toast.LENGTH_SHORT).show());
     }
 
-    // ==========================================================
-// ⚠️ Contar productos con stock bajo (≤ 5) - tolerante a String o Number
-// ==========================================================
+
     private void cargarStockBajo() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -139,18 +158,14 @@ public class DashboardProveedor extends AppCompatActivity {
                     int bajos = 0;
                     for (DocumentSnapshot doc : snapshot.getDocuments()) {
                         Object stockObj = doc.get("stock");
-
                         if (stockObj != null) {
                             try {
                                 int stock;
-
-                                // 🔹 Detectar tipo del campo en tiempo real
                                 if (stockObj instanceof Number) {
                                     stock = ((Number) stockObj).intValue();
                                 } else {
                                     stock = Integer.parseInt(stockObj.toString());
                                 }
-
                                 if (stock <= 5) bajos++;
                             } catch (Exception ignored) {}
                         }
@@ -161,9 +176,7 @@ public class DashboardProveedor extends AppCompatActivity {
                         Toast.makeText(this, "❌ Error al contar stock bajo: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // ==========================================================
-    // 📬 Contar órdenes recibidas del proveedor
-    // ==========================================================
+
     private void cargarOrdenesRecibidas() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -177,20 +190,18 @@ public class DashboardProveedor extends AppCompatActivity {
                         Toast.makeText(this, "❌ Error al cargar órdenes", Toast.LENGTH_SHORT).show());
     }
 
-    // ==========================================================
-    // 💰 Calcular ventas del mes actual
+
     // ==========================================================
     private void cargarVentasMes() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        // Obtener mes actual (ej: "2025-11")
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
         String mesActual = sdf.format(Calendar.getInstance().getTime());
 
         db.collection("ordenes")
                 .whereEqualTo("proveedorId", user.getUid())
-                .whereEqualTo("estado", "confirmada") // solo confirmadas
+                .whereEqualTo("estado", "confirmada")
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     double totalMes = 0.0;
@@ -207,7 +218,6 @@ public class DashboardProveedor extends AppCompatActivity {
                             }
                         }
                     }
-
                     tvVentasMes.setText("$" + String.format("%.0f", totalMes));
                 })
                 .addOnFailureListener(e ->

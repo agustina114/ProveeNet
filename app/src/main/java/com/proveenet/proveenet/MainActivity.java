@@ -1,14 +1,18 @@
 package com.proveenet.proveenet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -81,12 +85,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // =======================================================
-    // 🔹 Cambia colores y textos según el tipo de usuario
+
     // =======================================================
     private void actualizarFormulario() {
         int blanco = ContextCompat.getColor(this, android.R.color.white);
         int negro = ContextCompat.getColor(this, android.R.color.black);
+
+        //  Paleta de colores
+        ColorStateList moradoComprador = ColorStateList.valueOf(Color.parseColor("#6A1B9A"));
+        ColorStateList verdeProveedor = ColorStateList.valueOf(Color.parseColor("#2E7D32"));
 
         if (esComprador) {
             // ======== COMPRADOR ========
@@ -95,8 +102,15 @@ public class MainActivity extends AppCompatActivity {
             btnComprador.setTextColor(blanco);
             btnProveedor.setTextColor(negro);
 
+            //  Pinta el botón Comprador morado
+            ViewCompat.setBackgroundTintList(btnComprador, moradoComprador);
+
             tvLoginTitle.setText("Iniciar Sesión - Comprador");
             etEmail.setHint("tu@email.cl");
+
+            //  Botón Ingresar morado también
+            btnLogin.setBackgroundResource(R.drawable.button_blue_bg);
+            ViewCompat.setBackgroundTintList(btnLogin, moradoComprador);
 
         } else {
             // ======== PROVEEDOR ========
@@ -105,13 +119,19 @@ public class MainActivity extends AppCompatActivity {
             btnProveedor.setTextColor(blanco);
             btnComprador.setTextColor(negro);
 
+            //  Pinta el botón Proveedor verde
+            ViewCompat.setBackgroundTintList(btnProveedor, verdeProveedor);
+
             tvLoginTitle.setText("Iniciar Sesión - Proveedor");
             etEmail.setHint("proveedor@empresa.cl");
+
+            // 🟢 Botón Ingresar verde también
+            btnLogin.setBackgroundResource(R.drawable.button_blue_bg);
+            ViewCompat.setBackgroundTintList(btnLogin, verdeProveedor);
         }
     }
 
-    // =======================================================
-    // 🔹 Función principal de login
+
     // =======================================================
     private void iniciarSesion() {
         String email = etEmail.getText().toString().trim();
@@ -139,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 );
     }
 
-    // =======================================================
-    // 🔹 Verificar si el usuario pertenece a la colección
+
     // =======================================================
     private void verificarRolEnFirestore(String uid, String coleccion) {
         db.collection(coleccion).document(uid).get()

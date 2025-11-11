@@ -17,7 +17,7 @@ import com.google.firebase.firestore.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class MiCarrito extends AppCompatActivity {
+public class MiCarrito extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
@@ -71,7 +71,6 @@ public class MiCarrito extends AppCompatActivity {
 
         cargarCarrito();
 
-        // --- Listeners ---
         btnBack.setOnClickListener(v -> finish());
         btnExplorarProductos.setOnClickListener(v -> {
             startActivity(new Intent(this, Productos.class));
@@ -80,8 +79,6 @@ public class MiCarrito extends AppCompatActivity {
         btnVaciarCarrito.setOnClickListener(v -> vaciarCarrito());
         btnFinalizarCompra.setOnClickListener(v -> confirmarFinalizacion());
 
-        // --- Navegación ---
-        // --- ¡ARREGLO! Navegación completada
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_inicio) {
@@ -259,8 +256,6 @@ public class MiCarrito extends AppCompatActivity {
     }
 
     // ==========================================================
-    // 🧾 CONFIRMACIÓN Y CREACIÓN DE ORDEN
-    // ==========================================================
     private void confirmarFinalizacion() {
         if (itemsActuales.isEmpty()) {
             Toast.makeText(this, "El carrito está vacío", Toast.LENGTH_SHORT).show();
@@ -282,7 +277,7 @@ public class MiCarrito extends AppCompatActivity {
         String compradorId = user.getUid();
         String compradorNombre = user.getDisplayName() != null ? user.getDisplayName() : (user.getEmail() != null ? user.getEmail() : "Usuario Anónimo");
 
-        // --- ¡ARREGLO! Usar un WriteBatch ---
+
         WriteBatch batch = db.batch();
 
         for (Map<String, Object> item : itemsActuales) {
@@ -300,15 +295,14 @@ public class MiCarrito extends AppCompatActivity {
             orden.put("productoId", productoId);
             orden.put("productoNombre", productoNombre);
             orden.put("proveedorNombre", proveedorNombre);
-            orden.put("proveedorId", proveedorId); // <-- ¡ARREGLO! Guardar el ID
+            orden.put("proveedorId", proveedorId);
 
-            // --- ¡ARREGLO! Guardar números como NÚMEROS ---
-            // Tu DashboardProveedor.java lo necesita para sumar
+
             orden.put("cantidad", cantidad);
             orden.put("precioUnitario", precioUnitario);
             orden.put("subtotal", subtotal);
 
-            orden.put("fechaCreacion", FieldValue.serverTimestamp()); // Es más confiable
+            orden.put("fechaCreacion", FieldValue.serverTimestamp());
             orden.put("estado", "pendiente");
             orden.put("confirmacionProveedor", "pendiente");
 
@@ -321,7 +315,7 @@ public class MiCarrito extends AppCompatActivity {
         batch.commit()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "✅ Orden generada correctamente", Toast.LENGTH_SHORT).show();
-                    vaciarCarritoSilencioso(); // Vaciar carrito SÓLO si todo salió bien
+                    vaciarCarritoSilencioso();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "❌ Error al crear orden", Toast.LENGTH_SHORT).show();

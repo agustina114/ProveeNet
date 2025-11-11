@@ -25,7 +25,7 @@ import com.google.firebase.firestore.Query;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MiCatalogo extends AppCompatActivity {
+public class MiCatalogo extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
