@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,7 +15,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Nombre y badge verificado -->
+        <!-- Nombre -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +33,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Categoría y verificado -->
+        <!-- Categoría + Verificado -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,7 +114,32 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Botones de acción -->
+        <!-- Correo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_email"
+                app:tint="#757575" />
+
+            <TextView
+                android:id="@+id/tvCorreo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="correo@correo.cl"
+                android:textColor="#757575"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Botones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -128,11 +154,12 @@
                 android:background="@drawable/btn_outline_bg"
                 android:drawableLeft="@drawable/ic_eye"
                 android:drawablePadding="8dp"
-                android:text="Ver Catálogo"
+                android:gravity="center"
+                android:text="Catálogo"
                 android:textAllCaps="false"
                 android:textColor="#424242"
                 android:textSize="14sp"
-                android:gravity="center" />
+                app:backgroundTint="#FFFFFF" />
 
             <Button
                 android:id="@+id/btnContactar"
@@ -144,7 +171,8 @@
                 android:text="Contactar"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:backgroundTint="#155dfc" />
         </LinearLayout>
 
     </LinearLayout>

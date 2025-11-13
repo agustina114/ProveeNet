@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Botón menú hamburguesa -->
         <ImageButton
             android:id="@+id/btnMenu"
             android:layout_width="40dp"
@@ -28,7 +27,6 @@
             android:src="@drawable/ic_menu"
             android:tint="#FFFFFF" />
 
-        <!-- Título y nombre empresa -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,7 +51,6 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Botón notificaciones -->
         <ImageButton
             android:id="@+id/btnNotifications"
             android:layout_width="40dp"
@@ -62,7 +59,6 @@
             android:src="@drawable/ic_notifications"
             android:tint="#FFFFFF" />
 
-        <!-- Botón salir -->
         <ImageButton
             android:id="@+id/btnLogout"
             android:layout_width="40dp"
@@ -122,7 +118,6 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Botón Agregar Producto -->
                 <Button
                     android:id="@+id/btnAgregarProducto"
                     android:layout_width="wrap_content"
@@ -135,7 +130,8 @@
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:backgroundTint="#00a63e" />
             </LinearLayout>
 
             <!-- Barra de búsqueda -->
@@ -162,17 +158,21 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:hint="Buscar en mi catálogo..."
-                    android:inputType="text"
                     android:textColor="#000000"
                     android:textColorHint="#BDBDBD"
                     android:textSize="15sp" />
             </LinearLayout>
 
-            <!-- Filtros -->
+            <!-- TABS (BAJADOS CON ESPACIO) -->
             <HorizontalScrollView
+                android:id="@+id/tabsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="#BCFFFFFF"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp"
                 android:scrollbars="none">
 
                 <LinearLayout
@@ -180,44 +180,51 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/btnTodos"
+                    <TextView
+                        android:id="@+id/tabTodos"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:background="@drawable/chip_selected_green_bg"
-                        android:paddingHorizontal="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/tab_selected"
+                        android:paddingStart="20dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="8dp"
                         android:text="Todos"
-                        android:textAllCaps="false"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
 
-                    <Button
-                        android:id="@+id/btnActivos"
+                    <TextView
+                        android:id="@+id/tabPendiente"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/chip_unselected_bg"
-                        android:paddingHorizontal="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/tab_unselected"
+                        android:paddingStart="20dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="8dp"
                         android:text="Activos"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
+                        android:textColor="#666666"
                         android:textSize="14sp" />
 
-                    <Button
-                        android:id="@+id/btnStockBajo"
+                    <TextView
+                        android:id="@+id/tabEnProceso"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/chip_unselected_bg"
-                        android:paddingHorizontal="20dp"
-                        android:text="Stock Bajo"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/tab_unselected"
+                        android:paddingStart="20dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="8dp"
+                        android:text="Bajo Stock"
+                        android:textColor="#666666"
                         android:textSize="14sp" />
                 </LinearLayout>
             </HorizontalScrollView>
 
-            <!-- Lista completa de productos -->
+            <!-- Lista de productos -->
             <LinearLayout
                 android:id="@+id/llProductos"
                 android:layout_width="match_parent"
@@ -226,7 +233,7 @@
                 android:layout_marginTop="16dp"
                 android:paddingBottom="8dp" />
 
-            <!-- Productos recientes -->
+            <!-- Recientes -->
             <TextView
                 android:id="@+id/tvRecientesTitulo"
                 android:layout_width="wrap_content"

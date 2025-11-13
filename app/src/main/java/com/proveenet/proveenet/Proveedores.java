@@ -124,27 +124,54 @@ public class Proveedores extends BaseActivity {
         int count = 0;
 
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
+
             String empresa = doc.getString("empresa");
             String rubro = doc.getString("rubro");
             String correo = doc.getString("correo");
             String telefono = doc.getString("telefono");
+            String direccion = doc.getString("direccion"); // ✔ NUEVO
 
-            // Inflar una card
+            // 🔹 Inflar card bonita item_proveedor.xml
             View card = LayoutInflater.from(this)
-                    .inflate(R.layout.item_proveedor_card, llListaProveedores, false);
+                    .inflate(R.layout.item_proveedor, llListaProveedores, false);
 
+            // 🔹 Vincular vistas que SI existen
             TextView tvNombre = card.findViewById(R.id.tvNombreProveedor);
-            TextView tvRubro = card.findViewById(R.id.tvCategoria);
-            TextView tvCorreo = card.findViewById(R.id.tvDireccion);
+            TextView tvCategoria = card.findViewById(R.id.tvCategoria);
+            TextView tvVerificado = card.findViewById(R.id.tvVerificado);
+            TextView tvDireccion = card.findViewById(R.id.tvDireccion);
             TextView tvTelefono = card.findViewById(R.id.tvTelefono);
+            // Si agregas correo de nuevo después:
+            // TextView tvCorreo = card.findViewById(R.id.tvCorreo);
 
-            tvNombre.setText(empresa != null ? empresa : "Proveedor sin nombre");
-            tvRubro.setText("Rubro: " + (rubro != null ? rubro : "No especificado"));
-            tvCorreo.setText("Correo: " + (correo != null ? correo : "Sin correo"));
-            tvTelefono.setText("Teléfono: " + (telefono != null ? telefono : "Sin teléfono"));
-
-            // Botón Contactar
+            Button btnCatalogo = card.findViewById(R.id.btnVerCatalogo);
             Button btnContactar = card.findViewById(R.id.btnContactar);
+
+            // 🔹 Asignar datos reales
+            tvNombre.setText(empresa != null ? empresa : "Proveedor sin nombre");
+            tvCategoria.setText(rubro != null ? rubro : "Sin categoría");
+
+            // ❌ No existe campo verificado: lo ocultamos
+            tvVerificado.setVisibility(View.GONE);
+
+            // ✔ DIRECCIÓN REAL
+            if (direccion != null && !direccion.isEmpty()) {
+                tvDireccion.setText(direccion);
+                tvDireccion.setVisibility(View.VISIBLE);
+            } else {
+                tvDireccion.setText("Sin dirección");
+                tvDireccion.setVisibility(View.VISIBLE);
+            }
+
+            // ✔ TELÉFONO
+            tvTelefono.setText(telefono != null ? telefono : "Sin teléfono");
+
+            // 🔹 Botón Ver Catálogo
+            btnCatalogo.setOnClickListener(v ->
+                    Toast.makeText(this, "📦 Ver catálogo de " + empresa, Toast.LENGTH_SHORT).show()
+            );
+
+            // 🔹 Botón Contactar
             btnContactar.setOnClickListener(v ->
                     Toast.makeText(this, "📞 Contactar a " + empresa, Toast.LENGTH_SHORT).show()
             );
@@ -155,4 +182,5 @@ public class Proveedores extends BaseActivity {
 
         tvProveedoresCount.setText(count + " proveedores disponibles");
     }
+
 }

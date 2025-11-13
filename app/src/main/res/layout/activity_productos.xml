@@ -149,7 +149,8 @@
                     android:text="Todos"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    app:backgroundTint="#155dfc" />
 
                 <Button
                     android:id="@+id/btnConstruccion"
@@ -160,8 +161,9 @@
                     android:paddingHorizontal="20dp"
                     android:text="Construcción"
                     android:textAllCaps="false"
-                    android:textColor="#424242"
-                    android:textSize="14sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:backgroundTint="#155dfc" />
 
                 <Button
                     android:id="@+id/btnTecnologia"
@@ -172,8 +174,9 @@
                     android:paddingHorizontal="20dp"
                     android:text="Tecnología"
                     android:textAllCaps="false"
-                    android:textColor="#424242"
-                    android:textSize="14sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:backgroundTint="#155dfc" />
             </LinearLayout>
         </HorizontalScrollView>
 

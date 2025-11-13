@@ -33,10 +33,13 @@
                 android:id="@+id/tvEstado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recibida"
+                android:text="pendiente"
                 android:textColor="#009944"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:background="@drawable/badge_estado_activo"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp" />
         </LinearLayout>
 
         <TextView
@@ -102,7 +105,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="$128.500"
-                    android:textColor="#009944"
+                    android:textColor="#388E3C"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -119,59 +122,47 @@
                     android:id="@+id/tvProductos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2 ítems"
+                    android:text="PC gamer"
                     android:textColor="#000000"
                     android:textSize="12sp"
                     android:layout_marginTop="4dp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Botones de acción -->
+        <!-- Botones de acción (solo 2 botones) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:weightSum="2">
 
-            <Button
-                android:id="@+id/btnVer"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ver"
-                android:textColor="#666666"
-                android:drawableStart="@android:drawable/ic_menu_view"
-                android:drawableTint="#666666"
-                android:layout_marginEnd="4dp"
-                app:strokeColor="#CCCCCC" />
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnEditar"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Editar"
-                android:textColor="#2196F3"
-                android:drawableStart="@android:drawable/ic_menu_edit"
-                android:drawableTint="#2196F3"
-                android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                app:strokeColor="#2196F3" />
+                android:background="@drawable/btn_white_bg"
+                android:text="Confirmar"
+                android:textAllCaps="false"
+                android:textColor="#2196F3"
+                android:textSize="13sp"
+                android:gravity="center" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnEliminar"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Eliminar"
-                android:textColor="#F44336"
-                android:drawableStart="@android:drawable/ic_menu_delete"
-                android:drawableTint="#F44336"
                 android:layout_marginStart="4dp"
-                app:strokeColor="#F44336" />
+                android:background="@drawable/btn_white_bg"
+                android:text="Eliminar"
+                android:textAllCaps="false"
+                android:textColor="#D32F2F"
+                android:textSize="13sp"
+                android:gravity="center" />
         </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

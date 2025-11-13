@@ -15,6 +15,7 @@
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/btn_selector_selected.xml" value="0.2265" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/btn_selector_selected_green.xml" value="0.1" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/btn_selector_unselected.xml" value="0.2265" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/btn_white_bg.xml" value="0.1295" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/button_blue_bg.xml" value="0.2265" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/button_green_bg.xml" value="0.1" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/chip_selected_bg.xml" value="0.1" />
@@ -47,22 +48,23 @@
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/search_bg.xml" value="0.1" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/selector_container_bg.xml" value="0.2265" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_compras.xml" value="0.20652173913043478" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_dashboard_proveedor.xml" value="0.2" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_dashboard_proveedor.xml" value="0.264" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_main.xml" value="0.20152091254752852" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_mi_carrito.xml" value="0.2" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_mi_catalogo.xml" value="0.2" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_mi_catalogo.xml" value="0.26851851851851855" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_mis_ordenes.xml" value="0.264" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_panel_comprador.xml" value="0.16" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_panel_comprador.xml" value="0.4" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_productos.xml" value="0.20652173913043478" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_proveedores.xml" value="0.1315136476426799" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_registro.xml" value="0.38078034682080925" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_proveedores.xml" value="0.26851851851851855" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_registro.xml" value="0.2822384428223844" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/card_panel_proveedor.xml" value="0.13500506585612967" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/dashboard_cards_grid.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_carrito.xml" value="0.27447916666666666" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_orden.xml" value="0.1334853090172239" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_orden.xml" value="0.264" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_producto_card.xml" value="0.264" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_producto_publico.xml" value="0.13297872340425532" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_proveedor.xml" value="0.152" />
-        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_proveedor_card.xml" value="0.13297872340425532" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_proveedor.xml" value="0.2" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_proveedor_card.xml" value="0.2" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/modal_agregar_producto.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/modal_editar_producto.xml" value="0.27447916666666666" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.205078125" />

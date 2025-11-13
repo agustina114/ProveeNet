@@ -26,7 +26,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_menu"
-            app:tint="#FFFFFF" /> <!-- Corregido: app:tint -->
+            app:tint="#FFFFFF" />
 
         <!-- Título y empresa -->
         <LinearLayout
@@ -61,7 +61,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_notifications"
-            app:tint="#FFFFFF" /> <!-- Corregido: app:tint -->
+            app:tint="#FFFFFF" />
 
         <ImageButton
             android:id="@+id/btnLogout"
@@ -70,7 +70,7 @@
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_logout"
-            app:tint="#FFFFFF" /> <!-- Corregido: app:tint -->
+            app:tint="#FFFFFF" />
     </LinearLayout>
 
     <!-- Contenido principal -->
@@ -102,13 +102,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
                 android:text="Bienvenido, ..."
                 android:textColor="#757575"
                 android:textSize="14sp" />
 
-            <!-- Grid con las cards -->
-            <!-- Esta línea está perfecta, carga el archivo de abajo -->
+            <!-- Grid con las cards de estadísticas -->
             <include layout="@layout/dashboard_cards_grid" />
+
+            <!-- 🆕 Panel de Proveedor -->
+            <include layout="@layout/card_panel_proveedor" />
 
         </LinearLayout>
     </ScrollView>

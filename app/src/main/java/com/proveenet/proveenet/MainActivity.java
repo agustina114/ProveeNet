@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
         int negro = ContextCompat.getColor(this, android.R.color.black);
 
         //  Paleta de colores
-        ColorStateList moradoComprador = ColorStateList.valueOf(Color.parseColor("#6A1B9A"));
-        ColorStateList verdeProveedor = ColorStateList.valueOf(Color.parseColor("#2E7D32"));
+        ColorStateList moradoComprador = ColorStateList.valueOf(Color.parseColor("#155dfc"));
+        ColorStateList verdeProveedor = ColorStateList.valueOf(Color.parseColor("#00a63e"));
 
         if (esComprador) {
             // ======== COMPRADOR ========

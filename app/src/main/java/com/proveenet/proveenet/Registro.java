@@ -1,6 +1,5 @@
 package com.proveenet.proveenet;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 
 import android.content.res.ColorStateList;
@@ -32,6 +31,7 @@ public class Registro extends BaseActivity {
 
     // 🔹 Campos Proveedor
     private EditText etNombreEmpresaProveedor, etEmailProveedor, etTelefonoProveedor;
+    private EditText etDireccionProveedor;  // ➕ NUEVO CAMPO
     private EditText etPasswordProveedor, etConfirmPasswordProveedor;
     private Spinner spinnerRubro;
     private Button btnCrearCuentaProveedor;
@@ -40,9 +40,8 @@ public class Registro extends BaseActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
 
-
-    private final ColorStateList moradoComprador = ColorStateList.valueOf(Color.parseColor("#6A1B9A"));
-    private final ColorStateList verdeProveedor = ColorStateList.valueOf(Color.parseColor("#2E7D32"));
+    private final ColorStateList moradoComprador = ColorStateList.valueOf(Color.parseColor("#155dfc"));
+    private final ColorStateList verdeProveedor = ColorStateList.valueOf(Color.parseColor("#00a63e"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +74,7 @@ public class Registro extends BaseActivity {
         etEmailProveedor = findViewById(R.id.etEmailProveedor);
         spinnerRubro = findViewById(R.id.spinnerRubro);
         etTelefonoProveedor = findViewById(R.id.etTelefonoProveedor);
+        etDireccionProveedor = findViewById(R.id.etDireccionProveedor); //NUEVO CAMPO
         etPasswordProveedor = findViewById(R.id.etPasswordProveedor);
         etConfirmPasswordProveedor = findViewById(R.id.etConfirmPasswordProveedor);
         btnCrearCuentaProveedor = findViewById(R.id.btnCrearCuentaProveedor);
@@ -89,43 +89,29 @@ public class Registro extends BaseActivity {
         btnCrearCuentaProveedor.setOnClickListener(v -> registrarProveedor());
     }
 
-
     private void mostrarFormularioComprador() {
         llFormComprador.setVisibility(View.VISIBLE);
         llFormProveedor.setVisibility(View.GONE);
 
-        // Botón activo → morado
         btnComprador.setBackgroundResource(R.drawable.btn_selector_selected);
         ViewCompat.setBackgroundTintList(btnComprador, moradoComprador);
         btnComprador.setTextColor(Color.WHITE);
 
-        // Botón inactivo → gris
         btnProveedor.setBackgroundResource(R.drawable.btn_selector_unselected);
         btnProveedor.setTextColor(Color.parseColor("#757575"));
-
-        // Botón “Crear Cuenta”
-        btnCrearCuentaComprador.setBackgroundResource(R.drawable.button_blue_bg);
-        ViewCompat.setBackgroundTintList(btnCrearCuentaComprador, moradoComprador);
     }
 
     private void mostrarFormularioProveedor() {
         llFormComprador.setVisibility(View.GONE);
         llFormProveedor.setVisibility(View.VISIBLE);
 
-        // Botón activo → verde
         btnProveedor.setBackgroundResource(R.drawable.btn_selector_selected);
         ViewCompat.setBackgroundTintList(btnProveedor, verdeProveedor);
         btnProveedor.setTextColor(Color.WHITE);
 
-        // Botón inactivo → gris
         btnComprador.setBackgroundResource(R.drawable.btn_selector_unselected);
         btnComprador.setTextColor(Color.parseColor("#757575"));
-
-        // Botón “Crear Cuenta”
-        btnCrearCuentaProveedor.setBackgroundResource(R.drawable.button_blue_bg);
-        ViewCompat.setBackgroundTintList(btnCrearCuentaProveedor, verdeProveedor);
     }
-
 
     // =======================================================
     private void registrarComprador() {
@@ -185,17 +171,17 @@ public class Registro extends BaseActivity {
         return true;
     }
 
-
     // =======================================================
     private void registrarProveedor() {
         String empresa = etNombreEmpresaProveedor.getText().toString().trim();
         String email = etEmailProveedor.getText().toString().trim();
         String rubro = spinnerRubro.getSelectedItem().toString();
         String telefono = etTelefonoProveedor.getText().toString().trim();
+        String direccion = etDireccionProveedor.getText().toString().trim(); // ➕ NUEVO CAMPO
         String password = etPasswordProveedor.getText().toString().trim();
         String confirmPassword = etConfirmPasswordProveedor.getText().toString().trim();
 
-        if (!validarCamposProveedor(empresa, email, rubro, telefono, password, confirmPassword)) return;
+        if (!validarCamposProveedor(empresa, email, rubro, telefono, direccion, password, confirmPassword)) return;
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -206,6 +192,7 @@ public class Registro extends BaseActivity {
                     proveedor.put("correo", email);
                     proveedor.put("rubro", rubro);
                     proveedor.put("telefono", telefono);
+                    proveedor.put("direccion", direccion); // ✔ GUARDADO EN FIRESTORE
                     proveedor.put("rol", "proveedor");
 
                     db.collection("proveedores").document(uid).set(proveedor)
@@ -222,7 +209,9 @@ public class Registro extends BaseActivity {
                 );
     }
 
-    private boolean validarCamposProveedor(String empresa, String email, String rubro, String telefono, String password, String confirmPassword) {
+    private boolean validarCamposProveedor(String empresa, String email, String rubro, String telefono, String direccion,
+                                           String password, String confirmPassword) {
+
         if (empresa.isEmpty()) {
             etNombreEmpresaProveedor.setError("Ingresa el nombre de tu empresa");
             return false;
@@ -239,8 +228,12 @@ public class Registro extends BaseActivity {
             etTelefonoProveedor.setError("Ingresa tu teléfono");
             return false;
         }
+        if (direccion.isEmpty()) {
+            etDireccionProveedor.setError("Ingresa tu dirección");
+            return false;
+        }
         if (password.isEmpty() || password.length() < 6) {
-            etPasswordProveedor.setError("La contraseña debe tener al menos 6 caracteres");
+            etPasswordProveedor.setError("Min 6 caracteres");
             return false;
         }
         if (!password.equals(confirmPassword)) {

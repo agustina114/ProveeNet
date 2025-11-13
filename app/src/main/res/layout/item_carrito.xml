@@ -21,6 +21,7 @@
             android:layout_height="24dp"
             android:background="@drawable/ic_delete"
             android:padding="0dp"
+            app:backgroundTint="#155dfc"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +59,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvProveedorCarrito" />
 
-
         <LinearLayout
             android:id="@+id/llControles"
             android:layout_width="wrap_content"
@@ -73,7 +73,8 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:text="-"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:backgroundTint="#155dfc" />
 
             <TextView
                 android:id="@+id/tvCantidadCarrito"
@@ -90,7 +91,8 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:text="+"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:backgroundTint="#155dfc" />
 
         </LinearLayout>
 
@@ -104,6 +106,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/llControles" />
 
+        <!-- SUBTOTAL -->
         <TextView
             android:id="@+id/tvSubtotalLabel"
             android:layout_width="wrap_content"
@@ -125,6 +128,16 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/tvSubtotalLabel"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- IVA -->
+        <TextView
+            android:id="@+id/tvIvaLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="IVA (19%):"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSubtotalLabel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

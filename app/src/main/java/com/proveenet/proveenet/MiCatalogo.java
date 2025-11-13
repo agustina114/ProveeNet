@@ -278,7 +278,7 @@ public class MiCatalogo extends BaseActivity {
             precio = String.valueOf(precioObj != null ? precioObj : "0");
         }
 
-        // 🔹 Stock: puede venir como número o texto
+        // Stock: puede venir como número o texto
         Object stockObj = doc.get("stock");
         String stock;
         if (stockObj instanceof Number) {

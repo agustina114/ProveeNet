@@ -8,6 +8,7 @@
     android:background="#F5F5F5"
     tools:context=".MiCarrito">
 
+    <!-- HEADER -->
     <LinearLayout
         android:id="@+id/llHeader"
         android:layout_width="0dp"
@@ -47,6 +48,7 @@
             android:contentDescription="Vaciar carrito" />
     </LinearLayout>
 
+    <!-- CARRITO VACÍO -->
     <LinearLayout
         android:id="@+id/llCarritoVacio"
         android:layout_width="0dp"
@@ -97,6 +99,7 @@
             android:textSize="15sp" />
     </LinearLayout>
 
+    <!-- LISTA DE PRODUCTOS -->
     <ScrollView
         android:id="@+id/scrollCarrito"
         android:layout_width="0dp"
@@ -115,6 +118,7 @@
             android:padding="16dp" />
     </ScrollView>
 
+    <!-- RESUMEN FINAL (Subtotal + IVA + Total) -->
     <LinearLayout
         android:id="@+id/llResumen"
         android:layout_width="0dp"
@@ -128,6 +132,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Cantidad de Productos -->
         <TextView
             android:id="@+id/tvTotalProductos"
             android:layout_width="wrap_content"
@@ -137,6 +142,7 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
+        <!-- Subtotal -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -161,12 +167,39 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- IVA -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="IVA (19%):"
+                android:textColor="#757575"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvIva"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0"
+                android:textColor="#424242"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Separador -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="12dp"
             android:background="#E0E0E0" />
 
+        <!-- Total a Pagar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -191,6 +224,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- Botón Finalizar Compra -->
         <Button
             android:id="@+id/btnCotizar"
             android:layout_width="match_parent"
@@ -201,9 +235,11 @@
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:backgroundTint="#155dfc" />
     </LinearLayout>
 
+    <!-- BOTTOM NAV -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="0dp"

@@ -1,6 +1,7 @@
 package com.proveenet.proveenet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,11 +29,12 @@ public class Panel_comprador extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_panel_comprador);
 
-        // 🔹 Firebase
+        //  Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = auth.getCurrentUser();
 
+        //  Vistas
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnLogout = findViewById(R.id.btnLogout);
         btnNotifications = findViewById(R.id.btnNotifications);
@@ -54,9 +56,9 @@ public class Panel_comprador extends BaseActivity {
         }
 
         cargarNombreUsuario();
-
         cargarEstadisticas();
 
+        //  Cerrar sesión
         btnLogout.setOnClickListener(v -> {
             auth.signOut();
             Intent intent = new Intent(Panel_comprador.this, MainActivity.class);
@@ -65,7 +67,7 @@ public class Panel_comprador extends BaseActivity {
             finish();
         });
 
-        // 🔹 Navegación inferior
+        //  Navegación inferior
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -87,6 +89,31 @@ public class Panel_comprador extends BaseActivity {
 
             return false;
         });
+
+        // Tarjetas de navegación
+
+        CardView cardProveedores = findViewById(R.id.cardProveedores);
+        CardView cardProductos = findViewById(R.id.cardProductos);
+        CardView cardNuevaCompra = findViewById(R.id.cardNuevaCompra);
+
+        // Redirigir a Proveedores
+        cardProveedores.setOnClickListener(v -> {
+            startActivity(new Intent(Panel_comprador.this, Proveedores.class));
+            overridePendingTransition(0, 0);
+        });
+
+        // Redirigir a Productos
+        cardProductos.setOnClickListener(v -> {
+            startActivity(new Intent(Panel_comprador.this, Productos.class));
+            overridePendingTransition(0, 0);
+        });
+
+        // Redirigir a Nueva Compra
+        cardNuevaCompra.setOnClickListener(v -> {
+            startActivity(new Intent(Panel_comprador.this, MiCarrito.class));
+            overridePendingTransition(0, 0);
+        });
+
     }
 
 
@@ -109,23 +136,22 @@ public class Panel_comprador extends BaseActivity {
                 .addOnFailureListener(e -> tvUserName.setText("Usuario"));
     }
 
-
     // ======================================================
     private void cargarEstadisticas() {
-        // 🧩 Total de proveedores
+        //  Total de proveedores
         db.collection("proveedores")
                 .get()
                 .addOnSuccessListener(snapshot -> tvProveedoresCount.setText(String.valueOf(snapshot.size())))
                 .addOnFailureListener(e -> tvProveedoresCount.setText("0"));
 
-        // 🧩 Total de productos activos
+        // Total de productos activos
         db.collection("productos")
                 .whereEqualTo("estado", "activo")
                 .get()
                 .addOnSuccessListener(snapshot -> tvProductosCount.setText(String.valueOf(snapshot.size())))
                 .addOnFailureListener(e -> tvProductosCount.setText("0"));
 
-        // 🧩 Total de compras y gasto del comprador actual
+        // Total de compras y gasto del comprador actual
         db.collection("ordenes")
                 .whereEqualTo("compradorId", user.getUid())
                 .get()

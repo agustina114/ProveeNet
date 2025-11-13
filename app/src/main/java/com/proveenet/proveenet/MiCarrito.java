@@ -1,6 +1,5 @@
 package com.proveenet.proveenet;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 
 import android.content.Intent;
@@ -14,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MiCarrito extends BaseActivity {
@@ -25,12 +23,12 @@ public class MiCarrito extends BaseActivity {
     // --- Vistas ---
     private LinearLayout llCarrito, llCarritoVacio, llResumen;
     private ScrollView scrollCarrito;
-    private TextView tvTotalProductos, tvSubtotal, tvTotal;
+    private TextView tvTotalProductos, tvSubtotal, tvIva, tvTotal;
     private ImageButton btnBack, btnVaciarCarrito;
     private Button btnFinalizarCompra, btnExplorarProductos;
     private BottomNavigationView bottomNavigationView;
 
-    // --- Variables Globales ---
+    // --- Variables ---
     private double subtotalGlobal = 0.0;
     private List<Map<String, Object>> itemsActuales = new ArrayList<>();
     private ListenerRegistration carritoListener;
@@ -43,18 +41,18 @@ public class MiCarrito extends BaseActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // --- Vistas ---
+        // --- Vistas XML ---
         llCarrito = findViewById(R.id.llCarrito);
         llCarritoVacio = findViewById(R.id.llCarritoVacio);
         llResumen = findViewById(R.id.llResumen);
         scrollCarrito = findViewById(R.id.scrollCarrito);
+
         tvTotalProductos = findViewById(R.id.tvTotalProductos);
         tvSubtotal = findViewById(R.id.tvSubtotal);
+        tvIva = findViewById(R.id.tvIva);   // <<--- IMPORTANTE
         tvTotal = findViewById(R.id.tvTotal);
 
-        // --- ARREGLO ---
         btnFinalizarCompra = findViewById(R.id.btnCotizar);
-
         btnVaciarCarrito = findViewById(R.id.btnVaciarCarrito);
         btnExplorarProductos = findViewById(R.id.btnExplorarProductos);
         btnBack = findViewById(R.id.btnBack);
@@ -89,18 +87,18 @@ public class MiCarrito extends BaseActivity {
                 startActivity(new Intent(this, Productos.class));
                 finish();
                 return true;
-            } else if (id == R.id.nav_proveedores) { // Añadido
+            } else if (id == R.id.nav_proveedores) {
                 startActivity(new Intent(this, Proveedores.class));
                 finish();
                 return true;
-
             } else if (id == R.id.nav_carrito) {
-                return true; // Ya estamos aquí
+                return true;
             }
             return false;
         });
     }
 
+    // ================================
     private void cargarCarrito() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -123,6 +121,7 @@ public class MiCarrito extends BaseActivity {
                 });
     }
 
+    // ================================
     private void mostrarCarritoConProductos(QuerySnapshot snapshots) {
         scrollCarrito.setVisibility(View.VISIBLE);
         llResumen.setVisibility(View.VISIBLE);
@@ -137,15 +136,10 @@ public class MiCarrito extends BaseActivity {
             String nombre = doc.getString("nombre");
             String proveedor = doc.getString("proveedor");
             String productoId = doc.getId();
-            String proveedorId = doc.getString("proveedorId"); // <-- ¡ARREGLO! Leer el ID
+            String proveedorId = doc.getString("proveedorId");
 
-            Double precio = 0.0;
-            if (doc.contains("precio") && doc.get("precio") instanceof Number)
-                precio = doc.getDouble("precio");
-
-            Long cantidad = 1L;
-            if (doc.contains("cantidad") && doc.get("cantidad") instanceof Number)
-                cantidad = doc.getLong("cantidad");
+            Double precio = doc.getDouble("precio");
+            Long cantidad = doc.getLong("cantidad");
 
             if (precio == null) precio = 0.0;
             if (cantidad == null) cantidad = 1L;
@@ -154,12 +148,11 @@ public class MiCarrito extends BaseActivity {
             subtotalGlobal += subtotalItem;
             totalItems += cantidad;
 
-            // Guardar item
             Map<String, Object> itemMap = new HashMap<>();
             itemMap.put("productoId", productoId);
             itemMap.put("nombre", nombre);
             itemMap.put("proveedor", proveedor);
-            itemMap.put("proveedorId", proveedorId); // <-- ¡ARREGLO! Guardar el ID
+            itemMap.put("proveedorId", proveedorId);
             itemMap.put("precio", precio);
             itemMap.put("cantidad", cantidad);
             itemsActuales.add(itemMap);
@@ -188,11 +181,19 @@ public class MiCarrito extends BaseActivity {
             llCarrito.addView(itemView);
         }
 
+        // ================================
+        //  CALCULAR SUBTOTAL, IVA y TOTAL
+        // ================================
+        double iva = subtotalGlobal * 0.19;
+        double totalFinal = subtotalGlobal + iva;
+
         tvTotalProductos.setText(totalItems + " productos");
         tvSubtotal.setText("$" + String.format("%.0f", subtotalGlobal));
-        tvTotal.setText("$" + String.format("%.0f", subtotalGlobal));
+        tvIva.setText("$" + String.format("%.0f", iva));
+        tvTotal.setText("$" + String.format("%.0f", totalFinal));
     }
 
+    // ================================
     private void actualizarCantidad(String productoId, long nuevaCantidad) {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -226,6 +227,7 @@ public class MiCarrito extends BaseActivity {
                 .show();
     }
 
+    // ================================
     private void vaciarCarrito() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -255,7 +257,7 @@ public class MiCarrito extends BaseActivity {
                 .show();
     }
 
-    // ==========================================================
+    // ================================
     private void confirmarFinalizacion() {
         if (itemsActuales.isEmpty()) {
             Toast.makeText(this, "El carrito está vacío", Toast.LENGTH_SHORT).show();
@@ -270,13 +272,15 @@ public class MiCarrito extends BaseActivity {
                 .show();
     }
 
+    // ================================
     private void crearOrden() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
         String compradorId = user.getUid();
-        String compradorNombre = user.getDisplayName() != null ? user.getDisplayName() : (user.getEmail() != null ? user.getEmail() : "Usuario Anónimo");
-
+        String compradorNombre = user.getDisplayName() != null ?
+                user.getDisplayName() :
+                (user.getEmail() != null ? user.getEmail() : "Usuario Anónimo");
 
         WriteBatch batch = db.batch();
 
@@ -284,7 +288,7 @@ public class MiCarrito extends BaseActivity {
             String productoId = (String) item.get("productoId");
             String productoNombre = (String) item.get("nombre");
             String proveedorNombre = (String) item.get("proveedor");
-            String proveedorId = (String) item.get("proveedorId"); // <-- ¡ARREGLO! Leer el ID
+            String proveedorId = (String) item.get("proveedorId");
             double precioUnitario = (double) item.get("precio");
             long cantidad = (long) item.get("cantidad");
             double subtotal = precioUnitario * cantidad;
@@ -297,7 +301,6 @@ public class MiCarrito extends BaseActivity {
             orden.put("proveedorNombre", proveedorNombre);
             orden.put("proveedorId", proveedorId);
 
-
             orden.put("cantidad", cantidad);
             orden.put("precioUnitario", precioUnitario);
             orden.put("subtotal", subtotal);
@@ -306,20 +309,17 @@ public class MiCarrito extends BaseActivity {
             orden.put("estado", "pendiente");
             orden.put("confirmacionProveedor", "pendiente");
 
-            // Añadir esta orden al batch
             DocumentReference ordenRef = db.collection("ordenes").document();
             batch.set(ordenRef, orden);
         }
 
-        // Ejecutar todas las operaciones a la vez
         batch.commit()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "✅ Orden generada correctamente", Toast.LENGTH_SHORT).show();
                     vaciarCarritoSilencioso();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "❌ Error al crear orden", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "❌ Error al crear orden", Toast.LENGTH_SHORT).show());
     }
 
     private void vaciarCarritoSilencioso() {

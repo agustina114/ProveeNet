@@ -3,7 +3,9 @@ package com.proveenet.proveenet;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,7 +13,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
@@ -27,6 +31,10 @@ public class DashboardProveedor extends BaseActivity {
     private TextView tvNombreEmpresa, tvWelcome, tvProductosActivos, tvStockBajo, tvOrdenesRecibidas, tvVentasMes;
     private BottomNavigationView bottomNavigationView;
     private ImageButton btnLogout;
+
+    // 🔹 Referencias para la última orden
+    private LinearLayout llUltimaOrden;
+    private TextView tvOrdenNumero, tvOrdenFecha, tvOrdenTotal, tvOrdenEstado, tvNoOrdenes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +55,15 @@ public class DashboardProveedor extends BaseActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnLogout = findViewById(R.id.btnLogout);
 
-        // ✅ Marca “Inicio” como activo
+        // 🔹 Referencias para última orden
+        llUltimaOrden = findViewById(R.id.llUltimaOrden);
+        tvOrdenNumero = findViewById(R.id.tvOrdenNumero);
+        tvOrdenFecha = findViewById(R.id.tvOrdenFecha);
+        tvOrdenTotal = findViewById(R.id.tvOrdenTotal);
+        tvOrdenEstado = findViewById(R.id.tvOrdenEstado);
+        tvNoOrdenes = findViewById(R.id.tvNoOrdenes);
+
+        // ✅ Marca "Inicio" como activo
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
         // 🚀 Cargar datos reales
@@ -56,6 +72,7 @@ public class DashboardProveedor extends BaseActivity {
         cargarStockBajo();
         cargarOrdenesRecibidas();
         cargarVentasMes();
+        cargarUltimaOrden(); // 🆕 Cargar última orden
 
         // 🔹 Navegación inferior
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -80,14 +97,12 @@ public class DashboardProveedor extends BaseActivity {
 
         // 🚪 Botón cerrar sesión
         btnLogout.setOnClickListener(v -> {
-            auth.signOut(); // Cierra la sesión actual en Firebase
-
+            auth.signOut();
             Toast.makeText(this, "👋 Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
-
             Intent intent = new Intent(DashboardProveedor.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia el historial
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish(); // Cierra la Activity actual
+            finish();
         });
     }
 
@@ -130,7 +145,6 @@ public class DashboardProveedor extends BaseActivity {
                 });
     }
 
-
     // ==========================================================
     private void cargarProductosActivos() {
         FirebaseUser user = auth.getCurrentUser();
@@ -145,7 +159,6 @@ public class DashboardProveedor extends BaseActivity {
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "❌ Error al contar productos", Toast.LENGTH_SHORT).show());
     }
-
 
     private void cargarStockBajo() {
         FirebaseUser user = auth.getCurrentUser();
@@ -176,7 +189,6 @@ public class DashboardProveedor extends BaseActivity {
                         Toast.makeText(this, "❌ Error al contar stock bajo: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-
     private void cargarOrdenesRecibidas() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -189,7 +201,6 @@ public class DashboardProveedor extends BaseActivity {
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "❌ Error al cargar órdenes", Toast.LENGTH_SHORT).show());
     }
-
 
     // ==========================================================
     private void cargarVentasMes() {
@@ -223,4 +234,50 @@ public class DashboardProveedor extends BaseActivity {
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "❌ Error al calcular ventas", Toast.LENGTH_SHORT).show());
     }
+
+    private void cargarUltimaOrden() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) return;
+
+        db.collection("ordenes")
+                .whereEqualTo("proveedorId", user.getUid())
+                .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.isEmpty()) {
+                        llUltimaOrden.setVisibility(View.GONE);
+                        tvNoOrdenes.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
+                    DocumentSnapshot doc = snapshot.getDocuments().get(0);
+
+                    String idOrden = doc.getId();
+                    String estado = doc.getString("estado");
+                    double subtotal = doc.getDouble("subtotal") != null ? doc.getDouble("subtotal") : 0.0;
+
+                    // Mostrar ID y subtotal
+                    tvOrdenNumero.setText("Orden #" + idOrden.substring(0, 6));
+                    tvOrdenTotal.setText("$" + String.format("%.0f", subtotal));
+
+                    // Estado con mayúscula
+                    if (estado != null && !estado.isEmpty()) {
+                        tvOrdenEstado.setText(estado.substring(0,1).toUpperCase() + estado.substring(1));
+                    } else {
+                        tvOrdenEstado.setText("Pendiente");
+                    }
+
+                    // Fecha "Reciente" mientras no uses Timestamp real
+                    tvOrdenFecha.setText("Reciente");
+
+                    llUltimaOrden.setVisibility(View.VISIBLE);
+                    tvNoOrdenes.setVisibility(View.GONE);
+                })
+                .addOnFailureListener(e -> {
+                    llUltimaOrden.setVisibility(View.GONE);
+                    tvNoOrdenes.setVisibility(View.VISIBLE);
+                });
+    }
+
 }
