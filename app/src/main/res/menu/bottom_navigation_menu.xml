@@ -20,5 +20,9 @@
         android:id="@+id/nav_carrito"
         android:icon="@drawable/ic_shopping_cart"
         android:title="Carrito" />
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/ic_avatar_placeholder"
+        android:title="Perfil" />
 
 </menu>

@@ -103,6 +103,10 @@ public class MisOrdenes extends BaseActivity {
                 return true;
             } else if (id == R.id.nav_ordenes) {
                 return true;
+            }else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, Perfil_proveedor.class));
+                overridePendingTransition(0, 0);
+                return true;
             }
             return false;
         });

@@ -62,6 +62,7 @@ public class MiCarrito extends BaseActivity {
         if (user == null) {
             Toast.makeText(this, "⚠️ Debes iniciar sesión", Toast.LENGTH_SHORT).show();
             finish();
+            overridePendingTransition(0, 0); // <-- AÑADIDO
             return;
         }
 
@@ -69,29 +70,53 @@ public class MiCarrito extends BaseActivity {
 
         cargarCarrito();
 
-        btnBack.setOnClickListener(v -> finish());
-        btnExplorarProductos.setOnClickListener(v -> {
-            startActivity(new Intent(this, Productos.class));
+        btnBack.setOnClickListener(v -> {
             finish();
+            overridePendingTransition(0, 0); // <-- AÑADIDO
         });
+
+        btnExplorarProductos.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Productos.class); // <-- MODIFICADO
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION); // <-- AÑADIDO
+            startActivity(intent);
+            finish();
+            overridePendingTransition(0, 0); // <-- AÑADIDO
+        });
+
         btnVaciarCarrito.setOnClickListener(v -> vaciarCarrito());
         btnFinalizarCompra.setOnClickListener(v -> confirmarFinalizacion());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_inicio) {
-                startActivity(new Intent(this, Panel_comprador.class));
+                Intent intent = new Intent(this, Panel_comprador.class); // <-- MODIFICADO
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION); // <-- AÑADIDO
+                startActivity(intent);
                 finish();
+                overridePendingTransition(0, 0); // <-- AÑADIDO
                 return true;
             } else if (id == R.id.nav_productos) {
-                startActivity(new Intent(this, Productos.class));
+                Intent intent = new Intent(this, Productos.class); // <-- MODIFICADO
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION); // <-- AÑADIDO
+                startActivity(intent);
                 finish();
+                overridePendingTransition(0, 0); // <-- AÑADIDO
                 return true;
             } else if (id == R.id.nav_proveedores) {
-                startActivity(new Intent(this, Proveedores.class));
+                Intent intent = new Intent(this, Proveedores.class); // <-- MODIFICADO
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION); // <-- AÑADIDO
+                startActivity(intent);
                 finish();
+                overridePendingTransition(0, 0); // <-- AÑADIDO
                 return true;
             } else if (id == R.id.nav_carrito) {
+                return true;
+            }else if (id == R.id.nav_perfil) {
+                Intent intent = new Intent(this, Perfil_proveedor.class); // <-- MODIFICADO
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION); // <-- AÑADIDO
+                startActivity(intent);
+                finish();
+                overridePendingTransition(0, 0); // <-- AÑADIDO
                 return true;
             }
             return false;

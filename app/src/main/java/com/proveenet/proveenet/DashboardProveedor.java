@@ -15,11 +15,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class DashboardProveedor extends BaseActivity {
@@ -35,6 +38,14 @@ public class DashboardProveedor extends BaseActivity {
     // 🔹 Referencias para la última orden
     private LinearLayout llUltimaOrden;
     private TextView tvOrdenNumero, tvOrdenFecha, tvOrdenTotal, tvOrdenEstado, tvNoOrdenes;
+
+    // 👇 1. Declarar los Listeners para tiempo real
+    private ListenerRegistration productosActivosListener;
+    private ListenerRegistration stockBajoListener;
+    private ListenerRegistration ordenesRecibidasListener;
+    private ListenerRegistration ventasMesListener;
+    private ListenerRegistration ultimaOrdenListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +77,13 @@ public class DashboardProveedor extends BaseActivity {
         // ✅ Marca "Inicio" como activo
         bottomNavigationView.setSelectedItemId(R.id.nav_inicio);
 
-        // 🚀 Cargar datos reales
-        cargarNombreProveedor();
-        cargarProductosActivos();
-        cargarStockBajo();
-        cargarOrdenesRecibidas();
-        cargarVentasMes();
-        cargarUltimaOrden(); // 🆕 Cargar última orden
+        // 🚀 Cargar datos reales (ahora escuchan en tiempo real)
+        cargarNombreProveedor(); // El nombre de la empresa no necesita tiempo real
+        escucharProductosActivos();
+        escucharStockBajo();
+        escucharOrdenesRecibidas();
+        escucharVentasMes();
+        escucharUltimaOrden();
 
         // 🔹 Navegación inferior
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -91,13 +102,27 @@ public class DashboardProveedor extends BaseActivity {
                 overridePendingTransition(0, 0);
                 return true;
             }
+            if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, Perfil_proveedor.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
 
             return false;
         });
 
-        // 🚪 Botón cerrar sesión
+        // ==========================================================
+        // 👇 === CAMBIO IMPORTANTE AQUÍ === 👇
+        // ==========================================================
         btnLogout.setOnClickListener(v -> {
+
+            // 1. Apagamos los listeners PRIMERO
+            detenerListeners();
+
+            // 2. Cerramos la sesión
             auth.signOut();
+
+            // 3. Mostramos mensaje y navegamos
             Toast.makeText(this, "👋 Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(DashboardProveedor.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -139,6 +164,10 @@ public class DashboardProveedor extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    // Evita el crash si el contexto es nulo (si el usuario cierra sesión rápido)
+                    if (this.isFinishing() || this.isDestroyed()) {
+                        return;
+                    }
                     tvNombreEmpresa.setText(user.getEmail());
                     tvWelcome.setText("Bienvenido, " + user.getEmail());
                     Toast.makeText(this, "❌ Error al cargar proveedor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -146,106 +175,118 @@ public class DashboardProveedor extends BaseActivity {
     }
 
     // ==========================================================
-    private void cargarProductosActivos() {
+    private void escucharProductosActivos() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        db.collection("productos")
+        productosActivosListener = db.collection("productos")
                 .whereEqualTo("proveedorId", user.getUid())
                 .whereEqualTo("estado", "activo")
-                .get()
-                .addOnSuccessListener(snapshot ->
-                        tvProductosActivos.setText(String.valueOf(snapshot.size())))
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "❌ Error al contar productos", Toast.LENGTH_SHORT).show());
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+
+                        return;
+                    }
+                    if (snapshot != null) {
+                        tvProductosActivos.setText(String.valueOf(snapshot.size()));
+                    }
+                });
     }
 
-    private void cargarStockBajo() {
+    private void escucharStockBajo() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        db.collection("productos")
+        stockBajoListener = db.collection("productos")
                 .whereEqualTo("proveedorId", user.getUid())
-                .get()
-                .addOnSuccessListener(snapshot -> {
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        // Toast.makeText(this, "❌ Error al contar stock bajo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (snapshot == null) return;
+
                     int bajos = 0;
                     for (DocumentSnapshot doc : snapshot.getDocuments()) {
                         Object stockObj = doc.get("stock");
                         if (stockObj != null) {
                             try {
-                                int stock;
+                                long stock; // Usar long para seguridad
                                 if (stockObj instanceof Number) {
-                                    stock = ((Number) stockObj).intValue();
+                                    stock = ((Number) stockObj).longValue();
                                 } else {
-                                    stock = Integer.parseInt(stockObj.toString());
+                                    stock = Long.parseLong(stockObj.toString());
                                 }
                                 if (stock <= 5) bajos++;
                             } catch (Exception ignored) {}
                         }
                     }
                     tvStockBajo.setText(String.valueOf(bajos));
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "❌ Error al contar stock bajo: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                });
     }
 
-    private void cargarOrdenesRecibidas() {
+    private void escucharOrdenesRecibidas() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        db.collection("ordenes")
+        ordenesRecibidasListener = db.collection("ordenes")
                 .whereEqualTo("proveedorId", user.getUid())
-                .get()
-                .addOnSuccessListener(snapshot ->
-                        tvOrdenesRecibidas.setText(String.valueOf(snapshot.size())))
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "❌ Error al cargar órdenes", Toast.LENGTH_SHORT).show());
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        // Toast.makeText(this, "❌ Error al cargar órdenes", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (snapshot != null) {
+                        tvOrdenesRecibidas.setText(String.valueOf(snapshot.size()));
+                    }
+                });
     }
 
-    // ==========================================================
-    private void cargarVentasMes() {
+    private void escucharVentasMes() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
-        String mesActual = sdf.format(Calendar.getInstance().getTime());
+        String mesActual = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
 
-        db.collection("ordenes")
+        ventasMesListener = db.collection("ventas")
                 .whereEqualTo("proveedorId", user.getUid())
-                .whereEqualTo("estado", "confirmada")
-                .get()
-                .addOnSuccessListener(snapshot -> {
+                .whereEqualTo("mesAno", mesActual)
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        // Toast.makeText(this, "❌ Error al calcular ventas: " + (e != null ? e.getMessage() : ""), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (snapshot == null) return;
+
                     double totalMes = 0.0;
                     for (QueryDocumentSnapshot doc : snapshot) {
-                        Object fechaObj = doc.get("fechaCreacion");
-                        Object subtotalObj = doc.get("subtotal");
-
-                        if (fechaObj != null && subtotalObj != null) {
-                            String fecha = fechaObj.toString();
-                            if (fecha.contains(mesActual)) {
-                                try {
-                                    totalMes += Double.parseDouble(subtotalObj.toString());
-                                } catch (NumberFormatException ignored) {}
-                            }
+                        Object totalObj = doc.get("total");
+                        if (totalObj instanceof Number) {
+                            totalMes += ((Number) totalObj).doubleValue();
                         }
                     }
                     tvVentasMes.setText("$" + String.format("%.0f", totalMes));
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "❌ Error al calcular ventas", Toast.LENGTH_SHORT).show());
+                });
     }
 
-    private void cargarUltimaOrden() {
+    private void escucharUltimaOrden() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        db.collection("ordenes")
+        ultimaOrdenListener = db.collection("ordenes")
                 .whereEqualTo("proveedorId", user.getUid())
                 .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
                 .limit(1)
-                .get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.isEmpty()) {
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        llUltimaOrden.setVisibility(View.GONE);
+                        tvNoOrdenes.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
+                    if (snapshot == null || snapshot.isEmpty()) {
                         llUltimaOrden.setVisibility(View.GONE);
                         tvNoOrdenes.setVisibility(View.VISIBLE);
                         return;
@@ -257,27 +298,51 @@ public class DashboardProveedor extends BaseActivity {
                     String estado = doc.getString("estado");
                     double subtotal = doc.getDouble("subtotal") != null ? doc.getDouble("subtotal") : 0.0;
 
-                    // Mostrar ID y subtotal
                     tvOrdenNumero.setText("Orden #" + idOrden.substring(0, 6));
                     tvOrdenTotal.setText("$" + String.format("%.0f", subtotal));
 
-                    // Estado con mayúscula
                     if (estado != null && !estado.isEmpty()) {
                         tvOrdenEstado.setText(estado.substring(0,1).toUpperCase() + estado.substring(1));
                     } else {
                         tvOrdenEstado.setText("Pendiente");
                     }
 
-                    // Fecha "Reciente" mientras no uses Timestamp real
                     tvOrdenFecha.setText("Reciente");
 
                     llUltimaOrden.setVisibility(View.VISIBLE);
                     tvNoOrdenes.setVisibility(View.GONE);
-                })
-                .addOnFailureListener(e -> {
-                    llUltimaOrden.setVisibility(View.GONE);
-                    tvNoOrdenes.setVisibility(View.VISIBLE);
                 });
     }
 
+
+
+    private void detenerListeners() {
+        if (productosActivosListener != null) {
+            productosActivosListener.remove();
+            productosActivosListener = null;
+        }
+        if (stockBajoListener != null) {
+            stockBajoListener.remove();
+            stockBajoListener = null;
+        }
+        if (ordenesRecibidasListener != null) {
+            ordenesRecibidasListener.remove();
+            ordenesRecibidasListener = null;
+        }
+        if (ventasMesListener != null) {
+            ventasMesListener.remove();
+            ventasMesListener = null;
+        }
+        if (ultimaOrdenListener != null) {
+            ultimaOrdenListener.remove();
+            ultimaOrdenListener = null;
+        }
+    }
+
+    // 👇 3. Modificamos onStop() para usar el nuevo método
+    @Override
+    protected void onStop() {
+        super.onStop();
+        detenerListeners();
+    }
 }

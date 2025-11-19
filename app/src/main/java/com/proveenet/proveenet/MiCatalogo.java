@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton; // 👈 IMPORTANTE: Asegúrate que esté
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,12 @@ public class MiCatalogo extends BaseActivity {
     private TextView tvProductosCount;
     private TextView tvNombreEmpresa;
 
+    // 👇 (No es necesario declarar btnLogout aquí si solo se usa en onCreate)
+
+    // 👇 1. Declarar las variables para los Listeners
+    private ListenerRegistration productosListener;
+    private ListenerRegistration productosRecientesListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +56,28 @@ public class MiCatalogo extends BaseActivity {
         btnAgregarProducto = findViewById(R.id.btnAgregarProducto);
         tvProductosCount = findViewById(R.id.tvProductosCount);
         tvNombreEmpresa = findViewById(R.id.tvNombreEmpresa);
+
+        // ==========================================================
+        // 👇 === ¡AQUÍ ESTÁ EL ARREGLO! === 👇
+        // ==========================================================
+        ImageButton btnLogout = findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(v -> {
+
+            // 1. Detenemos los listeners de ESTA PANTALLA
+            detenerListeners();
+
+            // 2. Cerramos la sesión
+            auth.signOut();
+
+            // 3. Mostramos mensaje y vamos al inicio
+            Toast.makeText(this, "👋 Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
+        // ==========================================================
+
 
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
@@ -83,6 +113,11 @@ public class MiCatalogo extends BaseActivity {
                 overridePendingTransition(0, 0);
                 finish();
                 return true;
+            }  if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, Perfil_proveedor.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
             }
 
             return false;
@@ -97,9 +132,7 @@ public class MiCatalogo extends BaseActivity {
         db.collection("proveedores").document(user.getUid()).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // 🔹 Ahora usamos el campo correcto: "empresa"
                         String nombre = documentSnapshot.getString("empresa");
-
                         if (nombre != null && !nombre.isEmpty()) {
                             tvNombreEmpresa.setText(nombre);
                         } else {
@@ -110,6 +143,7 @@ public class MiCatalogo extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return; // Evitar crash si se cierra sesión
                     tvNombreEmpresa.setText("Error al cargar");
                     Toast.makeText(this, "❌ Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
@@ -117,6 +151,7 @@ public class MiCatalogo extends BaseActivity {
 
 
     private void mostrarModalAgregarProducto() {
+        // ... (Tu método está bien, no se necesita cambiar)
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
             Toast.makeText(this, "⚠️ Sesión expirada. Inicia sesión nuevamente.", Toast.LENGTH_SHORT).show();
@@ -153,7 +188,6 @@ public class MiCatalogo extends BaseActivity {
             String categoria = etCategoria.getText().toString().trim();
             String descripcion = etDescripcion.getText().toString().trim();
 
-            // Convertimos a número seguro
             long precio = 0;
             long stock = 0;
             try {
@@ -213,13 +247,14 @@ public class MiCatalogo extends BaseActivity {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        db.collection("productos")
+        productosListener = db.collection("productos")
                 .whereEqualTo("proveedorId", user.getUid())
                 .addSnapshotListener((snapshots, e) -> {
-                    if (e != null || snapshots == null) {
-                        Toast.makeText(this, "Error al cargar productos: " + (e != null ? e.getMessage() : ""), Toast.LENGTH_SHORT).show();
+                    if (e != null) { // Quitamos el toast de error al cerrar sesión
                         return;
                     }
+                    if (snapshots == null) return;
+
 
                     llProductos.removeAllViews();
                     int count = 0;
@@ -245,7 +280,7 @@ public class MiCatalogo extends BaseActivity {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        db.collection("productos")
+        productosRecientesListener = db.collection("productos")
                 .whereEqualTo("proveedorId", user.getUid())
                 .orderBy("codigo", Query.Direction.DESCENDING)
                 .limit(2)
@@ -264,6 +299,7 @@ public class MiCatalogo extends BaseActivity {
 
 
     private void llenarCardProducto(DocumentSnapshot doc, View card) {
+        // ... (Tu método está bien, no se necesita cambiar)
         String nombre = doc.getString("nombre");
         String codigo = doc.getString("codigo");
         String categoria = doc.getString("categoria");
@@ -278,7 +314,6 @@ public class MiCatalogo extends BaseActivity {
             precio = String.valueOf(precioObj != null ? precioObj : "0");
         }
 
-        // Stock: puede venir como número o texto
         Object stockObj = doc.get("stock");
         String stock;
         if (stockObj instanceof Number) {
@@ -312,7 +347,6 @@ public class MiCatalogo extends BaseActivity {
 
         tvProveedor.setText("Proveedor: " + (proveedorNombre != null ? proveedorNombre : "Desconocido"));
 
-        // Eliminar producto
         card.findViewById(R.id.btnEliminar).setOnClickListener(v -> {
             new AlertDialog.Builder(this)
                     .setTitle("Eliminar producto")
@@ -321,7 +355,7 @@ public class MiCatalogo extends BaseActivity {
                             db.collection("productos").document(doc.getId())
                                     .delete()
                                     .addOnSuccessListener(x -> {
-                                        llProductos.removeView(card);
+                                        // llProductos.removeView(card); // Quitado para evitar bugs
                                         Toast.makeText(this, "🗑️ Producto eliminado", Toast.LENGTH_SHORT).show();
                                     })
                                     .addOnFailureListener(ex ->
@@ -334,7 +368,9 @@ public class MiCatalogo extends BaseActivity {
             mostrarModalEditarProducto(doc);
         });
     }
+
     private void mostrarModalEditarProducto(DocumentSnapshot doc) {
+        // ... (Tu método está bien, no se necesita cambiar)
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.modal_editar_producto);
         dialog.setCancelable(true);
@@ -355,7 +391,6 @@ public class MiCatalogo extends BaseActivity {
         Button btnGuardarEdit = dialog.findViewById(R.id.btnGuardarEdit);
         Button btnCancelarEdit = dialog.findViewById(R.id.btnCancelarEdit);
 
-        // Prellenar con datos existentes
         etNombreEdit.setText(doc.getString("nombre"));
         etCategoriaEdit.setText(doc.getString("categoria"));
         etDescripcionEdit.setText(doc.getString("descripcion"));
@@ -402,6 +437,29 @@ public class MiCatalogo extends BaseActivity {
         });
 
         dialog.show();
+    }
+
+    // ==========================================================
+    // 👇 === NUEVO MÉTODO PARA DETENER LISTENERS === 👇
+    // ==========================================================
+    private void detenerListeners() {
+        if (productosListener != null) {
+            productosListener.remove();
+            productosListener = null;
+        }
+
+        if (productosRecientesListener != null) {
+            productosRecientesListener.remove();
+            productosRecientesListener = null;
+        }
+    }
+
+
+    // 👇 MODIFICADO para usar el nuevo método
+    @Override
+    protected void onStop() {
+        super.onStop();
+        detenerListeners();
     }
 
 }

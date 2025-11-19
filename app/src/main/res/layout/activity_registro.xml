@@ -21,7 +21,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Botón volver -->
             <LinearLayout
                 android:id="@+id/btnVolver"
                 android:layout_width="wrap_content"
@@ -47,7 +46,6 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Logo -->
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
@@ -58,7 +56,6 @@
                 android:src="@drawable/ic_building"
                 app:tint="#2952E8" />
 
-            <!-- Título -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,7 +75,6 @@
                 android:textColor="#FFFFFF"
                 android:textSize="14sp" />
 
-            <!-- Card blanca con el formulario -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,7 +89,6 @@
                     android:orientation="vertical"
                     android:padding="24dp">
 
-                    <!-- Botones de selección Comprador/Proveedor -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -129,7 +124,6 @@
                             android:textSize="14sp" />
                     </LinearLayout>
 
-                    <!-- Contenedor para formularios -->
                     <LinearLayout
                         android:id="@+id/llFormComprador"
                         android:layout_width="match_parent"
@@ -138,7 +132,6 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <!-- Título -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -148,7 +141,6 @@
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <!-- Nombre Completo -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -186,7 +178,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Correo Electrónico -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -224,7 +215,80 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Empresa -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Teléfono *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_iphone"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etTelefonoComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="+56 9 1234 5678"
+                                android:inputType="phone"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Dirección *"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/input_bg"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_locations"
+                                app:tint="#9E9E9E" />
+
+                            <EditText
+                                android:id="@+id/etDireccionComprador"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:hint="Calle Principal #123"
+                                android:inputType="textPostalAddress"
+                                android:textColor="#000000"
+                                android:textColorHint="#BDBDBD"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -262,7 +326,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Contraseña -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -300,7 +363,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Confirmar Contraseña -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -338,7 +400,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Botón Crear Cuenta -->
                         <Button
                             android:id="@+id/btnCrearCuentaComprador"
                             android:layout_width="match_parent"
@@ -351,7 +412,6 @@
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
-                        <!-- Beneficios -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -403,7 +463,6 @@
 
                     </LinearLayout>
 
-                    <!-- Formulario Proveedor (oculto por defecto) -->
                     <LinearLayout
                         android:id="@+id/llFormProveedor"
                         android:layout_width="match_parent"
@@ -412,7 +471,6 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <!-- Título -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -422,7 +480,6 @@
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <!-- Nombre de la Empresa -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -460,7 +517,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Correo Electrónico -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -498,7 +554,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Rubro -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -534,7 +589,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Teléfono -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -606,7 +660,6 @@
                                 android:textColorHint="#BDBDBD"
                                 android:textSize="16sp" />
                         </LinearLayout>
-                        <!-- Contraseña -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -644,7 +697,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Confirmar Contraseña -->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -682,7 +734,6 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Botón Crear Cuenta -->
                         <Button
                             android:id="@+id/btnCrearCuentaProveedor"
                             android:layout_width="match_parent"
@@ -695,7 +746,6 @@
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
-                        <!-- Beneficios -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

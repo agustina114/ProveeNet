@@ -16,7 +16,7 @@
         android:title="Órdenes" />
 
     <item
-        android:id="@+id/nav_estadisticas"
-        android:icon="@drawable/ic_chart"
-        android:title="Estadísticas" />
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/ic_avatar_placeholder"
+        android:title="Perfil" />
 </menu>

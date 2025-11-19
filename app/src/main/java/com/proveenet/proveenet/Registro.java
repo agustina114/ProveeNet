@@ -26,12 +26,13 @@ public class Registro extends BaseActivity {
 
     // 🔹 Campos Comprador
     private EditText etNombreComprador, etEmailComprador, etEmpresaComprador;
+    private EditText etTelefonoComprador, etDireccionComprador; // ➕ NUEVOS CAMPOS
     private EditText etPasswordComprador, etConfirmPasswordComprador;
     private Button btnCrearCuentaComprador;
 
     // 🔹 Campos Proveedor
     private EditText etNombreEmpresaProveedor, etEmailProveedor, etTelefonoProveedor;
-    private EditText etDireccionProveedor;  // ➕ NUEVO CAMPO
+    private EditText etDireccionProveedor;
     private EditText etPasswordProveedor, etConfirmPasswordProveedor;
     private Spinner spinnerRubro;
     private Button btnCrearCuentaProveedor;
@@ -63,18 +64,22 @@ public class Registro extends BaseActivity {
         llFormProveedor = findViewById(R.id.llFormProveedor);
         btnVolver = findViewById(R.id.btnVolver);
 
+        // Vistas Comprador
         etNombreComprador = findViewById(R.id.etNombreComprador);
         etEmailComprador = findViewById(R.id.etEmailComprador);
+        etTelefonoComprador = findViewById(R.id.etTelefonoComprador); // ➕ Inicializar
+        etDireccionComprador = findViewById(R.id.etDireccionComprador); // ➕ Inicializar
         etEmpresaComprador = findViewById(R.id.etEmpresaComprador);
         etPasswordComprador = findViewById(R.id.etPasswordComprador);
         etConfirmPasswordComprador = findViewById(R.id.etConfirmPasswordComprador);
         btnCrearCuentaComprador = findViewById(R.id.btnCrearCuentaComprador);
 
+        // Vistas Proveedor
         etNombreEmpresaProveedor = findViewById(R.id.etNombreEmpresaProveedor);
         etEmailProveedor = findViewById(R.id.etEmailProveedor);
         spinnerRubro = findViewById(R.id.spinnerRubro);
         etTelefonoProveedor = findViewById(R.id.etTelefonoProveedor);
-        etDireccionProveedor = findViewById(R.id.etDireccionProveedor); //NUEVO CAMPO
+        etDireccionProveedor = findViewById(R.id.etDireccionProveedor);
         etPasswordProveedor = findViewById(R.id.etPasswordProveedor);
         etConfirmPasswordProveedor = findViewById(R.id.etConfirmPasswordProveedor);
         btnCrearCuentaProveedor = findViewById(R.id.btnCrearCuentaProveedor);
@@ -98,7 +103,10 @@ public class Registro extends BaseActivity {
         btnComprador.setTextColor(Color.WHITE);
 
         btnProveedor.setBackgroundResource(R.drawable.btn_selector_unselected);
-        btnProveedor.setTextColor(Color.parseColor("#757575"));
+        btnProveedor.setTextColor(Color.parseColor("#00a63e"));
+
+        btnCrearCuentaComprador.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#155dfc")));
+        btnCrearCuentaComprador.setEnabled(true);
     }
 
     private void mostrarFormularioProveedor() {
@@ -110,18 +118,25 @@ public class Registro extends BaseActivity {
         btnProveedor.setTextColor(Color.WHITE);
 
         btnComprador.setBackgroundResource(R.drawable.btn_selector_unselected);
-        btnComprador.setTextColor(Color.parseColor("#757575"));
+        btnComprador.setTextColor(Color.parseColor("#155dfc"));
+
+        btnCrearCuentaProveedor.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00A63E"))); // verde
+        btnCrearCuentaProveedor.setEnabled(true);
     }
 
+    // =======================================================
+    // 🔹 REGISTRO COMPRADOR ACTUALIZADO
     // =======================================================
     private void registrarComprador() {
         String nombre = etNombreComprador.getText().toString().trim();
         String email = etEmailComprador.getText().toString().trim();
+        String telefono = etTelefonoComprador.getText().toString().trim(); // ➕
+        String direccion = etDireccionComprador.getText().toString().trim(); // ➕
         String empresa = etEmpresaComprador.getText().toString().trim();
         String password = etPasswordComprador.getText().toString().trim();
         String confirmPassword = etConfirmPasswordComprador.getText().toString().trim();
 
-        if (!validarCamposComprador(nombre, email, empresa, password, confirmPassword)) return;
+        if (!validarCamposComprador(nombre, email, telefono, direccion, empresa, password, confirmPassword)) return;
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -130,6 +145,8 @@ public class Registro extends BaseActivity {
                     Map<String, Object> comprador = new HashMap<>();
                     comprador.put("nombre", nombre);
                     comprador.put("correo", email);
+                    comprador.put("telefono", telefono); // ➕ Guardar en Firestore
+                    comprador.put("direccion", direccion); // ➕ Guardar en Firestore
                     comprador.put("empresa", empresa);
                     comprador.put("rol", "comprador");
 
@@ -147,13 +164,21 @@ public class Registro extends BaseActivity {
                 );
     }
 
-    private boolean validarCamposComprador(String nombre, String email, String empresa, String password, String confirmPassword) {
+    private boolean validarCamposComprador(String nombre, String email, String telefono, String direccion, String empresa, String password, String confirmPassword) {
         if (nombre.isEmpty()) {
             etNombreComprador.setError("Ingresa tu nombre completo");
             return false;
         }
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etEmailComprador.setError("Ingresa un email válido");
+            return false;
+        }
+        if (telefono.isEmpty()) { // ➕ Validación
+            etTelefonoComprador.setError("Ingresa tu teléfono");
+            return false;
+        }
+        if (direccion.isEmpty()) { // ➕ Validación
+            etDireccionComprador.setError("Ingresa tu dirección");
             return false;
         }
         if (empresa.isEmpty()) {
@@ -172,12 +197,14 @@ public class Registro extends BaseActivity {
     }
 
     // =======================================================
+    // 🔹 REGISTRO PROVEEDOR (Sin cambios, ya funcionaba)
+    // =======================================================
     private void registrarProveedor() {
         String empresa = etNombreEmpresaProveedor.getText().toString().trim();
         String email = etEmailProveedor.getText().toString().trim();
         String rubro = spinnerRubro.getSelectedItem().toString();
         String telefono = etTelefonoProveedor.getText().toString().trim();
-        String direccion = etDireccionProveedor.getText().toString().trim(); // ➕ NUEVO CAMPO
+        String direccion = etDireccionProveedor.getText().toString().trim();
         String password = etPasswordProveedor.getText().toString().trim();
         String confirmPassword = etConfirmPasswordProveedor.getText().toString().trim();
 
@@ -192,7 +219,7 @@ public class Registro extends BaseActivity {
                     proveedor.put("correo", email);
                     proveedor.put("rubro", rubro);
                     proveedor.put("telefono", telefono);
-                    proveedor.put("direccion", direccion); // ✔ GUARDADO EN FIRESTORE
+                    proveedor.put("direccion", direccion);
                     proveedor.put("rol", "proveedor");
 
                     db.collection("proveedores").document(uid).set(proveedor)

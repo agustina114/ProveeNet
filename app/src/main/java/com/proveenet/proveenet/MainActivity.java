@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         registrate.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, Registro.class);
             startActivity(intent);
+            // 👇 --- ARREGLO AQUÍ ---
+            overridePendingTransition(0, 0); // Elimina la animación de entrada
         });
     }
 
@@ -170,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             startActivity(new Intent(this, DashboardProveedor.class));
                         }
+                        // 👇 --- ARREGLO AQUÍ ---
+                        overridePendingTransition(0, 0); // Elimina la animación de entrada
                         finish();
                     } else {
                         Toast.makeText(this, "No se encontró el usuario en " + coleccion, Toast.LENGTH_SHORT).show();

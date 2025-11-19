@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton; // Importar
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ public class Productos extends BaseActivity {
     private FirebaseFirestore db;
     private LinearLayout llListaProductos;
     private TextView tvProductosCount, tvUserName;
+    private ImageButton btnLogout; // Declarar
+    private ListenerRegistration productosListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +47,34 @@ public class Productos extends BaseActivity {
         tvProductosCount = findViewById(R.id.tvProductosCount);
         tvUserName = findViewById(R.id.tvUserName);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
+        btnLogout = findViewById(R.id.btnLogout); // Vincular
 
         bottomNavigationView.setSelectedItemId(R.id.nav_productos);
 
         mostrarNombreUsuario();
-
-        cargarProductosDisponibles();
-
+        escucharProductosEnTiempoReal();
         setupBottomNavigation();
+
+        // 👇 [CÓDIGO CORREGIDO AQUÍ]
+        // 🔹 Funcionalidad del botón Logout
+        btnLogout.setOnClickListener(v -> {
+
+            // 1. Apagar el listener PRIMERO
+            if (productosListener != null) {
+                productosListener.remove();
+                productosListener = null;
+            }
+
+            // 2. Ahora sí, cerrar sesión
+            auth.signOut();
+
+            // 3. Navegar a la pantalla principal
+            Toast.makeText(this, "👋 Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Productos.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 
 
@@ -64,7 +88,6 @@ public class Productos extends BaseActivity {
 
         String uid = user.getUid();
 
-        // Primero busca en compradores
         db.collection("compradores").document(uid).get()
                 .addOnSuccessListener(document -> {
                     if (document.exists()) {
@@ -75,7 +98,6 @@ public class Productos extends BaseActivity {
                             tvUserName.setText("Sin nombre");
                         }
                     } else {
-                        // Si no está en compradores, buscar en proveedores
                         db.collection("proveedores").document(uid).get()
                                 .addOnSuccessListener(docProv -> {
                                     if (docProv.exists()) {
@@ -100,32 +122,49 @@ public class Productos extends BaseActivity {
             int id = item.getItemId();
             if (id == R.id.nav_inicio) {
                 startActivity(new Intent(this, Panel_comprador.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (id == R.id.nav_proveedores) {
                 startActivity(new Intent(this, Proveedores.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (id == R.id.nav_productos) {
                 return true;
             } else if (id == R.id.nav_carrito) {
                 startActivity(new Intent(this, MiCarrito.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, Perfil_comprador.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             }
+
             return false;
         });
     }
 
 
     // ======================================================
-    private void cargarProductosDisponibles() {
-        db.collection("productos")
+    private void escucharProductosEnTiempoReal() {
+        productosListener = db.collection("productos")
                 .whereEqualTo("estado", "activo")
-                .get()
-                .addOnSuccessListener(this::mostrarProductos)
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "❌ Error al cargar productos", Toast.LENGTH_LONG).show());
+                .addSnapshotListener((snapshot, e) -> {
+
+                    if (e != null) {
+                        // Este es el error que estabas viendo
+                        Toast.makeText(this, "❌ Error al escuchar productos: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (snapshot != null) {
+                        mostrarProductos(snapshot);
+                    }
+                });
     }
 
 
@@ -169,7 +208,6 @@ public class Productos extends BaseActivity {
             }
             // =============================================================
 
-            // 🔹 Inflar card
             View cardView = LayoutInflater.from(this)
                     .inflate(R.layout.item_producto_publico, llListaProductos, false);
 
@@ -242,5 +280,14 @@ public class Productos extends BaseActivity {
                                         Toast.makeText(this, "❌ Error al agregar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     }
                 });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (productosListener != null) {
+            productosListener.remove();
+            productosListener = null;
+        }
     }
 }

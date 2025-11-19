@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class Proveedores extends BaseActivity {
 
@@ -25,6 +27,9 @@ public class Proveedores extends BaseActivity {
     private LinearLayout llListaProveedores;
     private TextView tvProveedoresCount, tvUserName;
     private BottomNavigationView bottomNavigationView;
+
+    private ImageButton btnLogout;
+    private ListenerRegistration proveedoresListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +43,12 @@ public class Proveedores extends BaseActivity {
         tvProveedoresCount = findViewById(R.id.tvProveedoresCount);
         tvUserName = findViewById(R.id.tvUserName);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
+        btnLogout = findViewById(R.id.btnLogout);
 
         bottomNavigationView.setSelectedItemId(R.id.nav_proveedores);
 
         mostrarNombreUsuario();
-
-        cargarProveedores();
+        escucharProveedoresEnTiempoReal();
 
         // 🔹 Menú inferior
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -52,15 +57,48 @@ public class Proveedores extends BaseActivity {
             if (id == R.id.nav_inicio) {
                 startActivity(new Intent(this, Panel_comprador.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             } else if (id == R.id.nav_proveedores) {
                 return true;
             } else if (id == R.id.nav_productos) {
                 startActivity(new Intent(this, Productos.class));
                 overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (id == R.id.nav_carrito) {
+                startActivity(new Intent(this, MiCarrito.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, Perfil_comprador.class));
+                overridePendingTransition(0, 0);
+                finish();
                 return true;
             }
             return false;
+        });
+
+        // 👇 [CÓDIGO CORREGIDO AQUÍ]
+        // 🔹 Funcionalidad del botón Logout
+        btnLogout.setOnClickListener(v -> {
+
+            // 1. Apagar el listener PRIMERO
+            if (proveedoresListener != null) {
+                proveedoresListener.remove();
+                proveedoresListener = null;
+            }
+
+            // 2. Ahora sí, cerrar sesión
+            auth.signOut();
+
+            // 3. Navegar a la pantalla principal
+            Toast.makeText(this, "👋 Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Proveedores.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
     }
 
@@ -108,13 +146,21 @@ public class Proveedores extends BaseActivity {
 
 
     // ======================================================
-    private void cargarProveedores() {
-        db.collection("proveedores")
+    private void escucharProveedoresEnTiempoReal() {
+        proveedoresListener = db.collection("proveedores")
                 .whereEqualTo("rol", "proveedor")
-                .get()
-                .addOnSuccessListener(this::mostrarProveedores)
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "❌ Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                .addSnapshotListener((snapshot, e) -> {
+                    // Manejar error
+                    if (e != null) {
+                        Toast.makeText(this, "❌ Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    // Actualizar UI
+                    if (snapshot != null) {
+                        mostrarProveedores(snapshot);
+                    }
+                });
     }
 
 
@@ -129,7 +175,7 @@ public class Proveedores extends BaseActivity {
             String rubro = doc.getString("rubro");
             String correo = doc.getString("correo");
             String telefono = doc.getString("telefono");
-            String direccion = doc.getString("direccion"); // ✔ NUEVO
+            String direccion = doc.getString("direccion");
 
             // 🔹 Inflar card bonita item_proveedor.xml
             View card = LayoutInflater.from(this)
@@ -141,8 +187,6 @@ public class Proveedores extends BaseActivity {
             TextView tvVerificado = card.findViewById(R.id.tvVerificado);
             TextView tvDireccion = card.findViewById(R.id.tvDireccion);
             TextView tvTelefono = card.findViewById(R.id.tvTelefono);
-            // Si agregas correo de nuevo después:
-            // TextView tvCorreo = card.findViewById(R.id.tvCorreo);
 
             Button btnCatalogo = card.findViewById(R.id.btnVerCatalogo);
             Button btnContactar = card.findViewById(R.id.btnContactar);
@@ -151,20 +195,23 @@ public class Proveedores extends BaseActivity {
             tvNombre.setText(empresa != null ? empresa : "Proveedor sin nombre");
             tvCategoria.setText(rubro != null ? rubro : "Sin categoría");
 
-            // ❌ No existe campo verificado: lo ocultamos
-            tvVerificado.setVisibility(View.GONE);
-
-            // ✔ DIRECCIÓN REAL
-            if (direccion != null && !direccion.isEmpty()) {
-                tvDireccion.setText(direccion);
-                tvDireccion.setVisibility(View.VISIBLE);
-            } else {
-                tvDireccion.setText("Sin dirección");
-                tvDireccion.setVisibility(View.VISIBLE);
+            if (tvVerificado != null) {
+                tvVerificado.setVisibility(View.GONE);
             }
 
-            // ✔ TELÉFONO
-            tvTelefono.setText(telefono != null ? telefono : "Sin teléfono");
+            if (tvDireccion != null) {
+                if (direccion != null && !direccion.isEmpty()) {
+                    tvDireccion.setText(direccion);
+                    tvDireccion.setVisibility(View.VISIBLE);
+                } else {
+                    tvDireccion.setText("Sin dirección");
+                    tvDireccion.setVisibility(View.VISIBLE);
+                }
+            }
+
+            if(tvTelefono != null) {
+                tvTelefono.setText(telefono != null ? telefono : "Sin teléfono");
+            }
 
             // 🔹 Botón Ver Catálogo
             btnCatalogo.setOnClickListener(v ->
@@ -183,4 +230,12 @@ public class Proveedores extends BaseActivity {
         tvProveedoresCount.setText(count + " proveedores disponibles");
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (proveedoresListener != null) {
+            proveedoresListener.remove();
+            proveedoresListener = null;
+        }
+    }
 }

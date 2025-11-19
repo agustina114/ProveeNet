@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class Panel_comprador extends BaseActivity {
@@ -23,6 +25,12 @@ public class Panel_comprador extends BaseActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private FirebaseUser user;
+
+    // Listeners para tiempo real
+    private ListenerRegistration proveedoresListener;
+    private ListenerRegistration productosListener;
+    private ListenerRegistration ordenesListener;
+    private ListenerRegistration nombreListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +63,19 @@ public class Panel_comprador extends BaseActivity {
             return;
         }
 
-        cargarNombreUsuario();
-        cargarEstadisticas();
+        // Cargar datos en tiempo real
+        escucharNombreUsuario();
+        escucharEstadisticas();
 
-        //  Cerrar sesión
+        // 👇 [NUEVO] Link al Perfil (Clic en el nombre o menú)
+        tvUserName.setOnClickListener(v -> irAPerfil());
+        btnMenu.setOnClickListener(v -> irAPerfil());
+
+        // Cerrar sesión
         btnLogout.setOnClickListener(v -> {
+            apagarListeners();
             auth.signOut();
+            Toast.makeText(this, "👋 Sesión cerrada", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(Panel_comprador.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -76,54 +91,68 @@ public class Panel_comprador extends BaseActivity {
             } else if (id == R.id.nav_proveedores) {
                 startActivity(new Intent(this, Proveedores.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             } else if (id == R.id.nav_productos) {
                 startActivity(new Intent(this, Productos.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             } else if (id == R.id.nav_carrito) {
                 startActivity(new Intent(this, MiCarrito.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
-            }
-
+            } else if (id == R.id.nav_perfil) {
+            startActivity(new Intent(this, Perfil_comprador.class));
+            overridePendingTransition(0, 0);
+            finish();
+            return true;
+        }
             return false;
         });
 
         // Tarjetas de navegación
-
         CardView cardProveedores = findViewById(R.id.cardProveedores);
         CardView cardProductos = findViewById(R.id.cardProductos);
         CardView cardNuevaCompra = findViewById(R.id.cardNuevaCompra);
 
-        // Redirigir a Proveedores
         cardProveedores.setOnClickListener(v -> {
             startActivity(new Intent(Panel_comprador.this, Proveedores.class));
             overridePendingTransition(0, 0);
+            finish(); // Recomendable añadir finish si quieres navegación lineal
         });
-
-        // Redirigir a Productos
         cardProductos.setOnClickListener(v -> {
             startActivity(new Intent(Panel_comprador.this, Productos.class));
             overridePendingTransition(0, 0);
+            finish();
         });
-
-        // Redirigir a Nueva Compra
         cardNuevaCompra.setOnClickListener(v -> {
             startActivity(new Intent(Panel_comprador.this, MiCarrito.class));
             overridePendingTransition(0, 0);
+            finish();
         });
-
     }
 
+    // ======================================================
+    // 👇 MÉTODO NUEVO para ir al Perfil
+    private void irAPerfil() {
+        startActivity(new Intent(Panel_comprador.this, Perfil_comprador.class));
+        overridePendingTransition(0, 0); // Sin animación
+        finish(); // Cerramos panel para no acumular pantallas
+    }
 
     // ======================================================
-    private void cargarNombreUsuario() {
-        db.collection("compradores")
+    private void escucharNombreUsuario() {
+        nombreListener = db.collection("compradores")
                 .document(user.getUid())
-                .get()
-                .addOnSuccessListener(document -> {
-                    if (document.exists()) {
+                .addSnapshotListener((document, e) -> {
+                    if (e != null) {
+                        tvUserName.setText("Usuario");
+                        return;
+                    }
+
+                    if (document != null && document.exists()) {
                         String nombre = document.getString("nombre");
                         if (nombre != null && !nombre.isEmpty()) {
                             tvUserName.setText(nombre);
@@ -131,49 +160,84 @@ public class Panel_comprador extends BaseActivity {
                         } else {
                             tvUserName.setText("Usuario");
                         }
+                    } else {
+                        tvUserName.setText("Usuario");
                     }
-                })
-                .addOnFailureListener(e -> tvUserName.setText("Usuario"));
+                });
     }
 
     // ======================================================
-    private void cargarEstadisticas() {
-        //  Total de proveedores
-        db.collection("proveedores")
-                .get()
-                .addOnSuccessListener(snapshot -> tvProveedoresCount.setText(String.valueOf(snapshot.size())))
-                .addOnFailureListener(e -> tvProveedoresCount.setText("0"));
+    private void escucharEstadisticas() {
+
+        // Total de proveedores
+        proveedoresListener = db.collection("proveedores")
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null || snapshot == null) {
+                        tvProveedoresCount.setText("0");
+                        return;
+                    }
+                    tvProveedoresCount.setText(String.valueOf(snapshot.size()));
+                });
 
         // Total de productos activos
-        db.collection("productos")
+        productosListener = db.collection("productos")
                 .whereEqualTo("estado", "activo")
-                .get()
-                .addOnSuccessListener(snapshot -> tvProductosCount.setText(String.valueOf(snapshot.size())))
-                .addOnFailureListener(e -> tvProductosCount.setText("0"));
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null || snapshot == null) {
+                        tvProductosCount.setText("0");
+                        return;
+                    }
+                    tvProductosCount.setText(String.valueOf(snapshot.size()));
+                });
 
         // Total de compras y gasto del comprador actual
-        db.collection("ordenes")
+        ordenesListener = db.collection("ordenes")
                 .whereEqualTo("compradorId", user.getUid())
-                .get()
-                .addOnSuccessListener(snapshot -> {
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null || snapshot == null) {
+                        tvComprasCount.setText("0");
+                        tvTotalGastado.setText("$0");
+                        return;
+                    }
+
                     int cantidadCompras = snapshot.size();
                     double totalGastado = 0.0;
 
                     for (QueryDocumentSnapshot doc : snapshot) {
                         Object subtotalObj = doc.get("subtotal");
-                        if (subtotalObj != null) {
+                        if (subtotalObj instanceof Number) {
+                            totalGastado += ((Number) subtotalObj).doubleValue();
+                        } else {
                             try {
-                                totalGastado += Double.parseDouble(subtotalObj.toString());
+                                totalGastado += Double.parseDouble(String.valueOf(subtotalObj));
                             } catch (NumberFormatException ignored) {}
                         }
                     }
 
                     tvComprasCount.setText(String.valueOf(cantidadCompras));
                     tvTotalGastado.setText("$" + String.format("%.0f", totalGastado));
-                })
-                .addOnFailureListener(e -> {
-                    tvComprasCount.setText("0");
-                    tvTotalGastado.setText("$0");
                 });
+    }
+
+    // ======================================================
+    private void apagarListeners() {
+        if (nombreListener != null) {
+            nombreListener.remove();
+        }
+        if (proveedoresListener != null) {
+            proveedoresListener.remove();
+        }
+        if (productosListener != null) {
+            productosListener.remove();
+        }
+        if (ordenesListener != null) {
+            ordenesListener.remove();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        apagarListeners();
     }
 }

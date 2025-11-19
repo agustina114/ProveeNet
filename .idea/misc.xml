@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_activo_bg.xml" value="0.1135" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_background.xml" value="0.13" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_categoria_bg.xml" value="0.1" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_estado_activo.xml" value="0.1135" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_estado_inactivo.xml" value="0.136" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_verificado_bg.xml" value="0.1" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_verified.xml" value="0.258" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/badge_white_bg.xml" value="0.1515" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/bg_modal_rounded.xml" value="0.137" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/btn_outline_bg.xml" value="0.1" />
@@ -21,8 +23,10 @@
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/chip_selected_bg.xml" value="0.1" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/chip_selected_green_bg.xml" value="0.1135" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/chip_unselected_bg.xml" value="0.1" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/circle_background.xml" value="0.258" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/circle_white_bg.xml" value="0.2265" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/ic_arrow_back.xml" value="0.1515" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/ic_avatar_placeholder.xml" value="0.258" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/ic_business.xml" value="0.1515" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/ic_cart_add.xml" value="0.1" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/drawable/ic_category.xml" value="0.1515" />
@@ -54,6 +58,8 @@
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_mi_catalogo.xml" value="0.26851851851851855" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_mis_ordenes.xml" value="0.264" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_panel_comprador.xml" value="0.4" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_perfil_comprador.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_perfil_proveedor.xml" value="0.14492753623188406" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_productos.xml" value="0.20652173913043478" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_proveedores.xml" value="0.26851851851851855" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/activity_registro.xml" value="0.2822384428223844" />
@@ -66,6 +72,8 @@
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_proveedor.xml" value="0.2" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/item_proveedor_card.xml" value="0.2" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/modal_agregar_producto.xml" value="0.1838768115942029" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/modal_editar_cuenta.xml" value="0.26132246376811596" />
+        <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/modal_editar_cuenta_comprador.xml" value="0.26358695652173914" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/layout/modal_editar_producto.xml" value="0.27447916666666666" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.205078125" />
         <entry key="..\:/Users/agust/AndroidStudioProjects/ProveeNet/app/src/main/res/menu/bottom_navigation_proveedor.xml" value="0.1675925925925926" />
